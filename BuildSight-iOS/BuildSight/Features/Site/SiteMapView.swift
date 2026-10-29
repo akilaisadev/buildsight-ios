@@ -46,7 +46,7 @@ struct SiteMapView: View {
                         filterBar
                     }
                     // The tab bar is a safe-area inset above this, so only a small margin is needed here.
-                    .padding(.leading, verticalSizeClass == .compact ? 104 : 12).padding(.trailing, 12).padding(.bottom, verticalSizeClass == .compact ? 12 : 104)   // bar (84) + its margin (8) + a 12 pt gap, measured from the safe-area bottom
+                    .padding(.leading, verticalSizeClass == .compact ? 104 : 12).padding(.trailing, 12).padding(.bottom, verticalSizeClass == .compact ? 12 : 24)   // chips sit just above the tab bar   // bar (84) + its margin (8) + a 12 pt gap, measured from the safe-area bottom
                 }
                 .overlay(alignment: .topTrailing) {
                     if !projection.withoutLocation.isEmpty {
