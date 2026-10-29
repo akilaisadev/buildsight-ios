@@ -44,6 +44,8 @@ struct MainShell: View {
 
 struct PhoneShell: View {
     @EnvironmentObject private var router: AppRouter
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    private var isLandscape: Bool { verticalSizeClass == .compact }
     @EnvironmentObject private var context: ScreenContext
 
     /// Capture is an action, not a place, so it sits in the middle of the tab bar
@@ -52,6 +54,8 @@ struct PhoneShell: View {
 
     /// Space the floating bar needs at the bottom of every scrolling screen (pill height + margins).
     static let barClearance: CGFloat = Glove.barClearance
+    /// Landscape: width of the left rail plus its margins.
+    static let railClearance: CGFloat = 104
 
     var body: some View {
         TabView(selection: Binding<PhoneTab>(
@@ -98,6 +102,29 @@ struct PhoneShell: View {
         .padding(.bottom, 8)
     }
 
+    /// Landscape: the same five items as a vertical rail on the left edge.
+    private var railBar: some View {
+        VStack(spacing: 0) {
+            barItem(.home, "house.fill")
+            barItem(.activity, "waveform.path.ecg")
+            Button { router.showCapture = true } label: {
+                Image(systemName: "camera.fill").font(.title2.weight(.semibold)).foregroundStyle(.white)
+                    .frame(width: 66, height: 66).background(Theme.accent, in: Circle())
+                    .shadow(color: Theme.accent.opacity(0.45), radius: 10, y: 4)
+            }
+            .accessibilityLabel("Capture photo")
+            .frame(maxHeight: .infinity)
+            barItem(.site, "map.fill")
+            barItem(.tasks, "checklist")
+        }
+        .padding(.vertical, 10)
+        .frame(width: 84)
+        .frame(maxHeight: .infinity)
+        .background(Color(light: 0x1C1C1E, dark: 0xE5E5EA), in: Capsule())
+        .padding(.leading, 10)
+        .padding(.vertical, 8)
+    }
+
     private func barItem(_ tab: AppTab, _ symbol: String) -> some View {
         let selected = router.tab == tab
         return Button { router.tab = tab } label: {
@@ -123,15 +150,19 @@ struct PhoneShell: View {
         // margin so the last rows scroll up above the bar and stay reachable.
         // Applied to the whole stack, so EVERY screen in it (however it was opened: route,
         // NavigationLink, sheet-free push) leaves room for the floating bar at the bottom.
-        .contentMargins(.bottom, Self.barClearance, for: .scrollContent)
+        .contentMargins(isLandscape ? .leading : .bottom, isLandscape ? Self.railClearance : Self.barClearance, for: .scrollContent)
         // A soft fade to the page colour under the bar, so text scrolling past the bottom
         // edge (and under the home indicator) never shows behind the bar.
-        .overlay(alignment: .bottom) {
-            floatingBar.background(alignment: .bottom) {
-                LinearGradient(colors: [Theme.background.opacity(0), Theme.background, Theme.background], startPoint: .top, endPoint: .bottom)
-                    .frame(height: Glove.barClearance + 40)
-                    .ignoresSafeArea(edges: .bottom)
-                    .allowsHitTesting(false)
+        .overlay(alignment: isLandscape ? .leading : .bottom) {
+            if isLandscape {
+                railBar
+            } else {
+                floatingBar.background(alignment: .bottom) {
+                    LinearGradient(colors: [Theme.background.opacity(0), Theme.background, Theme.background], startPoint: .top, endPoint: .bottom)
+                        .frame(height: Glove.barClearance + 40)
+                        .ignoresSafeArea(edges: .bottom)
+                        .allowsHitTesting(false)
+                }
             }
         }
         .toolbar(.hidden, for: .tabBar)

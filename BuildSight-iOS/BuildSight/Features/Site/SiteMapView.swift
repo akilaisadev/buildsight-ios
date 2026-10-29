@@ -8,6 +8,7 @@ struct SiteMapView: View {
     @EnvironmentObject private var context: ScreenContext
     @EnvironmentObject private var router: AppRouter
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var model = MapViewModel()
     @State private var position: MapCameraPosition = .automatic
     @State private var selectedID: String?
@@ -45,7 +46,7 @@ struct SiteMapView: View {
                         filterBar
                     }
                     // The tab bar is a safe-area inset above this, so only a small margin is needed here.
-                    .padding(.horizontal, 12).padding(.bottom, 104)   // bar (84) + its margin (8) + a 12 pt gap, measured from the safe-area bottom
+                    .padding(.leading, verticalSizeClass == .compact ? 104 : 12).padding(.trailing, 12).padding(.bottom, verticalSizeClass == .compact ? 12 : 104)   // bar (84) + its margin (8) + a 12 pt gap, measured from the safe-area bottom
                 }
                 .overlay(alignment: .topTrailing) {
                     if !projection.withoutLocation.isEmpty {
