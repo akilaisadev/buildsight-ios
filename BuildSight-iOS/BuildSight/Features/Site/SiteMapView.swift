@@ -34,6 +34,7 @@ struct SiteMapView: View {
                     .mapControls { MapUserLocationButton(); MapCompass(); MapScaleView() }
                     .mapStyle(.standard(elevation: .realistic))
                     .ignoresSafeArea()   // the map fills the whole screen, under the header and to the bottom edge
+                    .tint(.blue)         // neutral: MapKit shows the tint if tiles fail to load (the app accent is orange)
 
                     VStack(spacing: 8) {
                         if projection.items.isEmpty {
@@ -44,7 +45,7 @@ struct SiteMapView: View {
                         filterBar
                     }
                     // The tab bar is a safe-area inset above this, so only a small margin is needed here.
-                    .padding(.horizontal, 12).padding(.bottom, Glove.barClearance)   // the map is not a scroll view, so clear the bar explicitly
+                    .padding(.horizontal, 12).padding(.bottom, 104)   // bar (84) + its margin (8) + a 12 pt gap, measured from the safe-area bottom
                 }
                 .overlay(alignment: .topTrailing) {
                     if !projection.withoutLocation.isEmpty {
