@@ -308,7 +308,7 @@ struct HelmetReviewSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section { Picker("Decision", selection: $mode) { Text("Confirm").tag(0); Text("Correct").tag(1); Text("Dismiss").tag(2) }.pickerStyle(.segmented) }
+                Section { GloveChoice(options: [GloveOption(label: "Confirm", symbol: "checkmark", value: 0, tone: "success"), GloveOption(label: "Correct", symbol: "pencil", value: 1, tone: "info"), GloveOption(label: "Dismiss", symbol: "xmark", value: 2, tone: "low")], selection: $mode).listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8)) }
                 switch mode {
                 case 0: Section { Text("Confirms that a worker in this photo is not wearing a helmet. The issue stays open for follow-up.") }
                 case 1:

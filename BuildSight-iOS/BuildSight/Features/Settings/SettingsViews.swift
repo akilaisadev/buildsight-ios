@@ -14,7 +14,8 @@ struct NotificationsView: View {
             if let s = context.data.snapshot, let model {
                 @Bindable var model = model
                 List {
-                    Picker("Filter", selection: $model.showUnreadOnly) { Text("All").tag(false); Text("Unread").tag(true) }.pickerStyle(.segmented).listRowBackground(Color.clear)
+                    GloveChoice(options: [GloveOption(label: "All", value: false), GloveOption(label: "Unread", symbol: "circle.fill", value: true)], selection: $model.showUnreadOnly)
+                        .listRowBackground(Color.clear).listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                     let items = model.items(in: s)
                     if items.isEmpty { EmptyStateView(symbol: "bell.slash", title: "You're up to date", message: "Assignments, flags and reminders for this project appear here.").listRowBackground(Color.clear) }
                     ForEach(items) { n in
@@ -101,13 +102,12 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section {
-                Picker("Appearance", selection: $appearanceRaw) {
-                    Text("System").tag("system")
-                    Text("Light").tag("light")
-                    Text("Dark").tag("dark")
-                }
-                .pickerStyle(.segmented)
-                .frame(minHeight: 48)
+                GloveChoice(options: [
+                    GloveOption(label: "System", symbol: "circle.lefthalf.filled", value: "system"),
+                    GloveOption(label: "Light", symbol: "sun.max.fill", value: "light"),
+                    GloveOption(label: "Dark", symbol: "moon.fill", value: "dark"),
+                ], selection: $appearanceRaw)
+                .listRowInsets(EdgeInsets(top: 8, leading: 8, bottom: 8, trailing: 8))
             } header: { Text("Appearance") } footer: {
                 Text("System switches to Dark automatically at night.")
             }

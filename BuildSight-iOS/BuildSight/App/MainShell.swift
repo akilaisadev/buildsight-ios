@@ -114,11 +114,13 @@ struct PhoneShell: View {
     private func appTab(_ tab: AppTab) -> some View {
         NavigationStack(path: Binding(get: { router.paths[tab] ?? [] }, set: { router.paths[tab] = $0 })) {
             root(for: tab)
-                .contentMargins(.bottom, Self.barClearance, for: .scrollContent)
-                .navigationDestination(for: Route.self) { RouteDestination(route: $0).contentMargins(.bottom, Self.barClearance, for: .scrollContent) }
+                .navigationDestination(for: Route.self) { RouteDestination(route: $0) }
         }
         // The bar floats over the content (as in the Figma). Scroll content gets bottom
         // margin so the last rows scroll up above the bar and stay reachable.
+        // Applied to the whole stack, so EVERY screen in it (however it was opened: route,
+        // NavigationLink, sheet-free push) leaves room for the floating bar at the bottom.
+        .contentMargins(.bottom, Self.barClearance, for: .scrollContent)
         .overlay(alignment: .bottom) { floatingBar }
         .toolbar(.hidden, for: .tabBar)
         .tabItem { Label(tab.title, systemImage: tab.symbol) }

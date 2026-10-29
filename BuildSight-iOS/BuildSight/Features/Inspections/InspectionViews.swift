@@ -90,10 +90,16 @@ struct InspectionRunView: View {
                     ForEach(model.inspection.items) { item in
                         VStack(alignment: .leading, spacing: 8) {
                             Text(item.title).font(.headline)
-                            Picker("Result", selection: Binding(get: { item.result }, set: { if let r = $0 { model.set(r, for: item.id) } })) {
-                                ForEach(ChecklistResult.allCases, id: \.self) { Text($0.displayName).tag(Optional($0)) }
-                            }.pickerStyle(.segmented).disabled(model.isReadOnly)
-                            TextField("Note", text: Binding(get: { item.note }, set: { model.setNote($0, for: item.id) }), axis: .vertical).disabled(model.isReadOnly)
+                            GloveChoice(options: [
+                                GloveOption(label: "Pass", symbol: "checkmark", value: Optional(ChecklistResult.pass), tone: "success"),
+                                GloveOption(label: "Fail", symbol: "xmark", value: Optional(ChecklistResult.fail), tone: "critical"),
+                                GloveOption(label: "N/A", symbol: "minus", value: Optional(ChecklistResult.notApplicable), tone: "low"),
+                            ], selection: Binding(get: { item.result }, set: { if let r = $0 { model.set(r, for: item.id) } }))
+                            .disabled(model.isReadOnly)
+                            TextField("Add a note", text: Binding(get: { item.note }, set: { model.setNote($0, for: item.id) }), axis: .vertical)
+                                .font(.body).padding(.horizontal, 14).frame(minHeight: 52)
+                                .background(Theme.background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                .disabled(model.isReadOnly)
                         }
                     }
                     if let m = model.errorMessage { Section { ErrorBanner(message: m) } }
@@ -102,7 +108,7 @@ struct InspectionRunView: View {
                             Button("Save Progress") { Task { await model.saveProgress() } }.buttonStyle(SecondaryButtonStyle())
                             Button("Complete Inspection") { Task { await model.complete() } }.buttonStyle(PrimaryButtonStyle())
                             if context.actor.role.can(.raiseEmergencyStop), model.inspection.emergencyStop == nil {
-                                Button(role: .destructive) { showStop = true } label: { Label("Raise Emergency Stop", systemImage: "hand.raised.fill").frame(maxWidth: .infinity, minHeight: 44) }
+                                Button(role: .destructive) { showStop = true } label: { Label("Raise Emergency Stop", systemImage: "hand.raised.fill").font(.headline).frame(maxWidth: .infinity, minHeight: Glove.target) }
                             }
                         } footer: { Text("An emergency stop creates a Critical safety issue and notifies the project. It is a record in BuildSight, not a control for machinery.") }
                         .listRowBackground(Color.clear)
