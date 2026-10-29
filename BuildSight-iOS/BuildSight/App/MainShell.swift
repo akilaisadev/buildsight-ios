@@ -51,7 +51,7 @@ struct PhoneShell: View {
     private enum PhoneTab: Hashable { case app(AppTab), capture }
 
     /// Space the floating bar needs at the bottom of every scrolling screen (pill height + margins).
-    static let barClearance: CGFloat = 112
+    static let barClearance: CGFloat = Glove.barClearance
 
     var body: some View {
         TabView(selection: Binding<PhoneTab>(

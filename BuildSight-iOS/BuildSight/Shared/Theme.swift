@@ -56,6 +56,8 @@ enum AppearanceSetting {
 enum Glove {
     static let target: CGFloat = 64
     static let spacing: CGFloat = 16
+    /// Space the floating tab bar needs at the bottom of every screen (pill + margins).
+    static let barClearance: CGFloat = 112
 }
 
 struct Card<Content: View>: View {

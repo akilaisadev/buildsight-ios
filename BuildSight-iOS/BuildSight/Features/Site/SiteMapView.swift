@@ -43,7 +43,7 @@ struct SiteMapView: View {
                         filterBar
                     }
                     // The tab bar is a safe-area inset above this, so only a small margin is needed here.
-                    .padding(.horizontal, 12).padding(.bottom, 10)
+                    .padding(.horizontal, 12).padding(.bottom, Glove.barClearance)   // the map is not a scroll view, so clear the bar explicitly
                 }
                 .overlay(alignment: .topTrailing) {
                     if !projection.withoutLocation.isEmpty {
