@@ -116,6 +116,9 @@ struct PhoneShell: View {
             root(for: tab)
                 .navigationDestination(for: Route.self) { RouteDestination(route: $0) }
         }
+        // Solid header on every screen: scrolling content never shows through the top bar.
+        .toolbarBackground(Theme.background, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         // The bar floats over the content (as in the Figma). Scroll content gets bottom
         // margin so the last rows scroll up above the bar and stay reachable.
         // Applied to the whole stack, so EVERY screen in it (however it was opened: route,

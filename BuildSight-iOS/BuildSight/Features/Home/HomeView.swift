@@ -23,7 +23,7 @@ struct HomeView: View {
                     areasSection(snapshot)
                     recent(snapshot)
                 }
-                .padding(.horizontal, 16).padding(.top, 8).padding(.bottom, 120)
+                .padding(.horizontal, 16).padding(.top, 8)   // bottom space comes from the shared bar clearance
             } else if let error = context.data.loadError {
                 ErrorBanner(message: error).padding()
             } else {
