@@ -93,7 +93,7 @@ struct PhoneShell: View {
         }
         .padding(.horizontal, 10)
         .frame(height: 84)
-        .background(Color(light: 0x1C1C1E, dark: 0xE5E5EA).opacity(0.96), in: Capsule())
+        .background(Color(light: 0x1C1C1E, dark: 0xE5E5EA), in: Capsule())   // solid: no page text shows through
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
     }
@@ -121,7 +121,16 @@ struct PhoneShell: View {
         // Applied to the whole stack, so EVERY screen in it (however it was opened: route,
         // NavigationLink, sheet-free push) leaves room for the floating bar at the bottom.
         .contentMargins(.bottom, Self.barClearance, for: .scrollContent)
-        .overlay(alignment: .bottom) { floatingBar }
+        // A soft fade to the page colour under the bar, so text scrolling past the bottom
+        // edge (and under the home indicator) never shows behind the bar.
+        .overlay(alignment: .bottom) {
+            floatingBar.background(alignment: .bottom) {
+                LinearGradient(colors: [Theme.background.opacity(0), Theme.background, Theme.background], startPoint: .top, endPoint: .bottom)
+                    .frame(height: Glove.barClearance + 40)
+                    .ignoresSafeArea(edges: .bottom)
+                    .allowsHitTesting(false)
+            }
+        }
         .toolbar(.hidden, for: .tabBar)
         .tabItem { Label(tab.title, systemImage: tab.symbol) }
         .tag(PhoneTab.app(tab))
