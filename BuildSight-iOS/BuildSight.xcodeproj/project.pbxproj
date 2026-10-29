@@ -29,6 +29,7 @@
 		66BE6A00B48FA0B64318F018 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F85E3027745CE0645DC2A3F /* Theme.swift */; };
 		71EF99080B31BB409C0F3FE7 /* InspectionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880C40BC941A388712E18A84 /* InspectionViews.swift */; };
 		7D0DDC6E1C673806D56DAFE9 /* CaptureFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6404EB331B39A44297DD4 /* CaptureFlowView.swift */; };
+		7FA078EA25EF1DFC4CAAA93D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37F4C4FC813A1E102B3D031E /* Assets.xcassets */; };
 		87EE104E88C7DA0E5E53A05D /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B45374CEB8FF826E26ADD6 /* CameraService.swift */; };
 		91A3340BE7C96E48261CC522 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */; };
 		A41F2FE2919EE63EC36C3529 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */; };
@@ -85,6 +86,7 @@
 		298791794F17477F282ADAFC /* EvalRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvalRunner.swift; sourceTree = "<group>"; };
 		2E7A7B926C3776A129193398 /* BuildSight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BuildSight.entitlements; sourceTree = "<group>"; };
 		377B4A429EBE66B519E8DEFD /* HELMET_MODEL_FEASIBILITY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HELMET_MODEL_FEASIBILITY.md; sourceTree = "<group>"; };
+		37F4C4FC813A1E102B3D031E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		382F0BD81D57DB6FA0FACD46 /* REQUIREMENTS_MATRIX.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = REQUIREMENTS_MATRIX.md; sourceTree = "<group>"; };
 		39A2BC68D7036521E7CCD4BA /* test_schema.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = test_schema.sh; sourceTree = "<group>"; };
 		3E2CEB803BF7D7B31F138B65 /* BuildSightWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BuildSightWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -309,6 +311,7 @@
 		669F053DE2F41E557A92B535 /* BuildSight */ = {
 			isa = PBXGroup;
 			children = (
+				37F4C4FC813A1E102B3D031E /* Assets.xcassets */,
 				2E7A7B926C3776A129193398 /* BuildSight.entitlements */,
 				BCA8674415807E0390A39D8C /* Info.plist */,
 				C46F94846D344448A37B2C94 /* App */,
@@ -445,6 +448,7 @@
 			buildConfigurationList = 72D21CC5D121AB77C33A434C /* Build configuration list for PBXNativeTarget "BuildSight" */;
 			buildPhases = (
 				C8A244D6B7E6A5541D832841 /* Sources */,
+				9772098BAC710EFBFBA4669F /* Resources */,
 				FB33474FFA7380EAE56234D8 /* Frameworks */,
 				B352D0130601DFA0AEB6602E /* Embed Foundation Extensions */,
 			);
@@ -519,6 +523,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9772098BAC710EFBFBA4669F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FA078EA25EF1DFC4CAAA93D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		44A306E49C683DE5C0C19B4B /* Sources */ = {

@@ -33,7 +33,7 @@ struct SiteMapView: View {
                         }
                     }
                     .mapControls { MapUserLocationButton(); MapCompass(); MapScaleView() }
-                    .mapStyle(.standard(elevation: .realistic))
+                    .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))   // flat 3D-free tiles: clearer, and avoids the simulator's red-land rendering bug
                     .ignoresSafeArea()   // the map fills the whole screen, under the header and to the bottom edge
                     .tint(.blue)         // neutral: MapKit shows the tint if tiles fail to load (the app accent is orange)
 

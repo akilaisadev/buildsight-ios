@@ -23,6 +23,9 @@ struct LaunchBuildingView: View {
     @State private var flag = false
     @State private var sway = false
     @State private var brand = false
+    @State private var focus = false     // viewfinder brackets snap onto the building
+    @State private var scan: CGFloat = 0  // scan line position, 0 (top) to 1 (bottom)
+    @State private var verified = false
 
     private var floorColor: Color { Color(light: 0xB9B9C0, dark: 0x3A3A3C) }
     private var windowLit: Color { Color(light: 0x6E9BC9, dark: 0xFFC857) }     // night: warm lit windows
@@ -33,6 +36,7 @@ struct LaunchBuildingView: View {
             Theme.background.ignoresSafeArea()
             VStack(spacing: 26) {
                 scene.frame(width: 280, height: 270)
+                    .overlay { viewfinder }
                 VStack(spacing: 6) {
                     Text("BuildSight").font(.largeTitle.bold()).foregroundStyle(Theme.text)
                     Text("Capture the site. Know the story.").font(.subheadline).foregroundStyle(Theme.secondaryText)
@@ -44,6 +48,33 @@ struct LaunchBuildingView: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Loading BuildSight")
         .onAppear(perform: start)
+    }
+
+    /// Camera viewfinder that locks onto the finished building, sweeps a scan line
+    /// over it and shows a check: the app's "capture and check" idea in one beat.
+    private var viewfinder: some View {
+        ZStack {
+            ForEach(0..<4, id: \.self) { corner in
+                BracketCorner()
+                    .stroke(Theme.accent, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
+                    .frame(width: 34, height: 34)
+                    .rotationEffect(.degrees(Double(corner) * 90))
+                    .offset(x: (corner == 0 || corner == 3 ? -1 : 1) * (focus ? 118 : 150),
+                            y: (corner < 2 ? -1 : 1) * (focus ? 118 : 150))
+            }
+            .opacity(focus ? 1 : 0)
+            LinearGradient(colors: [Theme.accent.opacity(0), Theme.accent.opacity(0.55)], startPoint: .top, endPoint: .bottom)
+                .frame(width: 236, height: 26)
+                .overlay(alignment: .bottom) { Rectangle().fill(Theme.accent).frame(height: 2) }
+                .offset(y: -118 + scan * 236)
+                .opacity(scan > 0 && scan < 1 ? 1 : 0)
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 40)).foregroundStyle(.white, Color(hex: 0x34C759))
+                .offset(x: 104, y: 92)
+                .scaleEffect(verified ? 1 : 0.2)
+                .opacity(verified ? 1 : 0)
+        }
+        .allowsHitTesting(false)
     }
 
     private var scene: some View {
@@ -112,7 +143,7 @@ struct LaunchBuildingView: View {
 
     private func start() {
         if reduceMotion {
-            ground = 1; mast = 1; jib = true; flag = true; brand = true
+            ground = 1; mast = 1; jib = true; flag = true; brand = true; focus = true; verified = true
             for i in 0..<Self.floorCount { placed[i] = true; lit[i] = true }
             return
         }
@@ -126,6 +157,18 @@ struct LaunchBuildingView: View {
         }
         withAnimation(.spring(response: 0.5, dampingFraction: 0.45).delay(4.0)) { flag = true }
         withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true).delay(1.5)) { sway = true }
-        withAnimation(.easeOut(duration: 0.7).delay(4.1)) { brand = true }
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.65).delay(3.6)) { focus = true }
+        withAnimation(.easeInOut(duration: 0.8).delay(3.9)) { scan = 1 }
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.5).delay(4.6)) { verified = true }
+        withAnimation(.easeOut(duration: 0.6).delay(4.4)) { brand = true }
+    }
+}
+
+/// One corner of a viewfinder: an L shape whose corner is at the top left.
+private struct BracketCorner: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: r.minX, y: r.maxY)); p.addLine(to: CGPoint(x: r.minX, y: r.minY)); p.addLine(to: CGPoint(x: r.maxX, y: r.minY))
+        return p
     }
 }
