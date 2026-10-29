@@ -11,8 +11,8 @@ struct TaskListView: View {
         VStack(spacing: 0) {
             if let model, let snapshot = context.data.snapshot {
                 @Bindable var model = model
-                Picker("Group", selection: $model.bucket) { ForEach(TaskBucket.allCases, id: \.self) { Text($0.displayName).tag($0) } }
-                    .pickerStyle(.segmented).padding()
+                GloveChoice(options: TaskBucket.allCases.map { GloveOption(label: $0.displayName, value: $0) }, selection: $model.bucket)
+                    .padding(.horizontal, 16).padding(.vertical, 10)
                 let groups = model.grouped(snapshot)
                 let tasks = groups[model.bucket] ?? []
                 List {
@@ -26,7 +26,7 @@ struct TaskListView: View {
             } else { ProgressView().frame(maxHeight: .infinity) }
         }
         .navigationTitle("Tasks")
-        .toolbar { if model?.canCreate == true { ToolbarItem(placement: .topBarTrailing) { Button { showCreate = true } label: { Image(systemName: "plus") }.accessibilityLabel("New task") } } }
+        .toolbar { if model?.canCreate == true { ToolbarItem(placement: .topBarTrailing) { Button { showCreate = true } label: { Label("New Task", systemImage: "plus").font(.headline).labelStyle(.titleAndIcon).frame(minHeight: 44) } } } }
         .sheet(isPresented: $showCreate) { if let model { CreateTaskView(model: model) } }
         .task { if model == nil { model = TaskListViewModel(initialBucket: initialBucket, actor: context.actor, tasks: TaskRepository(store: context.store), sync: context.sync) } }
     }

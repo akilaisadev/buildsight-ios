@@ -32,6 +32,7 @@
 		87EE104E88C7DA0E5E53A05D /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B45374CEB8FF826E26ADD6 /* CameraService.swift */; };
 		91A3340BE7C96E48261CC522 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */; };
 		A41F2FE2919EE63EC36C3529 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */; };
+		A5AC66025C43C1EDBC4BB81A /* GloveChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A0AB8784CE1B57365E84A /* GloveChoice.swift */; };
 		B268AD9C0C374E1D4F634EBF /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F59CEAEEDE75E4A6F9FBAF /* SyncCoordinator.swift */; };
 		BF7135E430CDFC34AB63CFDD /* QRCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36296FB7776249BFE87ED0A /* QRCode.swift */; };
 		C928BAF71C10CC48F5685C64 /* PhonePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB08834FBC6D2DF2E2A5B30 /* PhonePreview.swift */; };
@@ -72,6 +73,7 @@
 		01F59CEAEEDE75E4A6F9FBAF /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		0767AC65213EF8B3A83CF047 /* Widgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Widgets.entitlements; sourceTree = "<group>"; };
 		086E31DB849E008F45706687 /* TaskViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViews.swift; sourceTree = "<group>"; };
+		096A0AB8784CE1B57365E84A /* GloveChoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GloveChoice.swift; sourceTree = "<group>"; };
 		097A29D08E6506AAC72DAD54 /* PlatformModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformModifiers.swift; sourceTree = "<group>"; };
 		0ADBA181D9BA1BEB599F154A /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		0CB08834FBC6D2DF2E2A5B30 /* PhonePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhonePreview.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 			children = (
 				285F86754FD0E61D6D48671B /* Components.swift */,
 				21505ED2368AF349F12F7249 /* EvidenceImage.swift */,
+				096A0AB8784CE1B57365E84A /* GloveChoice.swift */,
 				D9A0B7EE8378559AD8A74600 /* LaunchAnimation.swift */,
 				0CB08834FBC6D2DF2E2A5B30 /* PhonePreview.swift */,
 				097A29D08E6506AAC72DAD54 /* PlatformModifiers.swift */,
@@ -538,6 +541,7 @@
 				0C9BA79E1BA6E16917DD8BD9 /* Components.swift in Sources */,
 				F2DCBA01E7C0498BD3B2DAF3 /* ConnectivityMonitor.swift in Sources */,
 				01E8B9D70B666D1F9AB34204 /* EvidenceImage.swift in Sources */,
+				A5AC66025C43C1EDBC4BB81A /* GloveChoice.swift in Sources */,
 				D790E9B2087670561C3ECCE8 /* HomeView.swift in Sources */,
 				71EF99080B31BB409C0F3FE7 /* InspectionViews.swift in Sources */,
 				EB6CDEEDBD31D3FA02746411 /* IssueViews.swift in Sources */,
