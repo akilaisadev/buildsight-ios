@@ -29,7 +29,7 @@ struct NotificationsView: View {
                                     Text(n.title).font(.headline); Text(n.body).font(.subheadline).foregroundStyle(Theme.secondaryText)
                                     Text(n.createdAt, style: .relative).font(.caption).foregroundStyle(Theme.secondaryText)
                                 }
-                            }.frame(minHeight: 44).accessibilityElement(children: .combine).accessibilityValue(n.isRead ? "Read" : "Unread")
+                            }.frame(minHeight: Glove.target).accessibilityElement(children: .combine).accessibilityValue(n.isRead ? "Read" : "Unread")
                         }
                     }
                 }

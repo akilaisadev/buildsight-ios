@@ -85,7 +85,7 @@ struct SiteMapView: View {
                     let on = model.visibleKinds.contains(kind)
                     Button { model.toggle(kind) } label: {
                         Label(kind.displayName, systemImage: TimelineRow.symbol(kind)).font(.footnote.weight(.semibold))
-                            .padding(.horizontal, 12).frame(minHeight: 44)
+                            .padding(.horizontal, 12).frame(minHeight: Glove.target)
                             .background(on ? Theme.accent : Theme.surface, in: Capsule())
                             .foregroundStyle(on ? Theme.onAccent : Theme.text)
                             .overlay(Capsule().stroke(Theme.secondaryText.opacity(0.4)))

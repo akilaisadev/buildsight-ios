@@ -59,7 +59,7 @@ struct SignInView: View {
                         .buttonStyle(PrimaryButtonStyle())
                         .disabled(busy || email.isEmpty || password.isEmpty || environment.config == nil)
                     Button("Forgot password?") { showReset = true }
-                        .font(.subheadline).foregroundStyle(Theme.accentText).frame(minHeight: 44)
+                        .font(.body.weight(.semibold)).foregroundStyle(Theme.accentText).frame(minHeight: Glove.target)
                 }
             }
             .padding(.horizontal, 24).padding(.bottom, 32).frame(maxWidth: 440)
@@ -149,7 +149,7 @@ struct LockView: View {
             } else {
                 Button("Unlock") { Task { await unlock() } }.buttonStyle(PrimaryButtonStyle())
             }
-            Button("Sign Out") { Task { await environment.session.signOut() } }.frame(minHeight: 44)
+            Button("Sign Out") { Task { await environment.session.signOut() } }.frame(minHeight: Glove.target)
         }
         .padding(32).frame(maxWidth: 420).frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.background)
         .task { await unlock() }

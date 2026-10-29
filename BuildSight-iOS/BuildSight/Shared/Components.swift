@@ -106,3 +106,29 @@ struct SectionHeader: View {
 }
 
 func formatted(_ date: Date, style: Date.FormatStyle = .dateTime.day().month(.abbreviated).hour().minute()) -> String { date.formatted(style) }
+
+/// Loading placeholder: grey shapes in the shape of a record list, so the screen
+/// has its layout while data loads instead of a bare spinner.
+struct SkeletonList: View {
+    var rows = 3
+    var body: some View {
+        VStack(spacing: 12) {
+            ForEach(0..<rows, id: \.self) { _ in
+                HStack(spacing: 14) {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous).frame(width: 64, height: 64)
+                    VStack(alignment: .leading, spacing: 10) {
+                        RoundedRectangle(cornerRadius: 4).frame(width: 150, height: 14)
+                        RoundedRectangle(cornerRadius: 4).frame(width: 220, height: 18)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
+            }
+        }
+        .foregroundStyle(Theme.secondaryText.opacity(0.25))
+        .redacted(reason: .placeholder)
+        .accessibilityHidden(true)
+    }
+}

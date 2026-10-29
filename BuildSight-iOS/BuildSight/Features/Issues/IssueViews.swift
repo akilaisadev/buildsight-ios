@@ -396,7 +396,7 @@ struct PhotoDetailView: View {
                 let analysis = s.analyses.first { $0.photoID == photoID }
                 VStack(alignment: .leading, spacing: 16) {
                     EvidenceImage(photo: photo, files: context.files, analysis: analysis, showsOverlay: showOverlay).clipShape(RoundedRectangle(cornerRadius: 12))
-                    if analysis != nil { Toggle("Show helmet boxes", isOn: $showOverlay).frame(minHeight: 44) }
+                    if analysis != nil { Toggle("Show helmet boxes", isOn: $showOverlay).frame(minHeight: Glove.target) }
                     Card {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(photo.note.isEmpty ? "Photo" : photo.note).font(.headline)

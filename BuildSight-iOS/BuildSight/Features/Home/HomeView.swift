@@ -27,7 +27,7 @@ struct HomeView: View {
             } else if let error = context.data.loadError {
                 ErrorBanner(message: error).padding()
             } else {
-                ProgressView().padding(40)
+                SkeletonList().padding(.top, 8)
             }
         }
         .background(Theme.background)
@@ -278,7 +278,7 @@ struct ProjectSwitcher: View {
                         VStack(alignment: .leading) { Text(p.name).font(.headline); Text(p.locationName).font(.subheadline).foregroundStyle(Theme.secondaryText) }
                         Spacer()
                         if p.id == context.actor.projectID { Image(systemName: "checkmark").accessibilityLabel("Current project") }
-                    }.frame(minHeight: 44)
+                    }.frame(minHeight: Glove.target)
                 }
             }
             .navigationTitle("Projects").inlineNavigationTitle()

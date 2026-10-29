@@ -61,12 +61,25 @@ struct CaptureFlowView: View {
                 .padding(16)
                 .accessibilityHint("Scan the QR code for the area you are in")
             }
+            .overlay(alignment: .topLeading) { areaChip(model) }
             .sheet(isPresented: $showScanner) { scanner(model) }
         case .notDetermined: ProgressView()
         case .denied: EmptyStateView(symbol: "camera.fill", title: "Camera access is off", message: "BuildSight needs the camera to record site evidence. Turn it on in Settings.", actionTitle: "Open Settings") { openSettings() }
         case .restricted: EmptyStateView(symbol: "lock.fill", title: "Camera is restricted", message: "Screen Time or device management is blocking the camera.")
         case .noCamera: EmptyStateView(symbol: "camera.metering.unknown", title: "No camera available", message: "This device has no camera (for example the Simulator). Evidence capture needs a real camera.")
         }
+    }
+
+    /// Shows which area the next photo will be tagged to, before the worker takes it.
+    @ViewBuilder private func areaChip(_ model: CaptureViewModel) -> some View {
+        let name = model.selectedAreaID.flatMap { id in context.data.snapshot?.areas.first { $0.id == id }?.displayName }
+        Label(name ?? "No area set: scan the area code", systemImage: name == nil ? "exclamationmark.triangle.fill" : "mappin.and.ellipse")
+            .font(.headline).lineLimit(1).minimumScaleFactor(0.8)
+            .foregroundStyle(name == nil ? Theme.status("high").fg : Theme.text)
+            .padding(.horizontal, 16).frame(minHeight: Glove.target)
+            .background(.ultraThinMaterial, in: Capsule())
+            .padding(16)
+            .accessibilityLabel(name.map { "Photo will be tagged to \($0)" } ?? "No area set. Scan the area code first.")
     }
 
     private func scanner(_ model: CaptureViewModel) -> some View {
