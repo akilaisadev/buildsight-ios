@@ -33,6 +33,7 @@ struct SiteMapView: View {
                     }
                     .mapControls { MapUserLocationButton(); MapCompass(); MapScaleView() }
                     .mapStyle(.standard(elevation: .realistic))
+                    .ignoresSafeArea()   // the map fills the whole screen, under the header and to the bottom edge
 
                     VStack(spacing: 8) {
                         if projection.items.isEmpty {
@@ -56,6 +57,7 @@ struct SiteMapView: View {
             } else { ProgressView() }
         }
         .navigationTitle("Site")
+        .toolbarBackground(.hidden, for: .navigationBar)   // transparent header over the map
         .task { model.updatePermission(context.workspace.location.permission) }
     }
 
