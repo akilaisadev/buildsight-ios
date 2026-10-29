@@ -1,0 +1,5 @@
+// Committed build settings. Backend values come from the git-ignored Secrets.xcconfig
+// when it exists; without it the app still builds and shows "no backend configured".
+BUILDSIGHT_BACKEND_URL =
+BUILDSIGHT_ANON_KEY =
+#include? "Secrets.xcconfig"

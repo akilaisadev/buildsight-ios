@@ -1,0 +1,16 @@
+.DS_Store
+
+# Non-iOS files that stay on this Mac only (old React prototype and Figma export).
+# They are not part of the iOS app repository.
+/.figma/
+/src/
+/index.html
+/package.json
+/pnpm-lock.yaml
+/tsconfig.json
+/vite.config.ts
+/AGENTS.md
+/CLAUDE.md
+/.mise.toml
+/.gitattributes
+/*.py

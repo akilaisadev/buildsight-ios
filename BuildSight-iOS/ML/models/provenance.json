@@ -1,0 +1,18 @@
+{
+  "source_repo": "keremberke/yolov8n-hard-hat-detection",
+  "source_commit": "287bafa2feb311ee45d21f9e9b33315ff6ff955d",
+  "checkpoint_file": "best.pt",
+  "checkpoint_sha256": "05ed3a517485292d42d6eb6c9be3987ea51cd162e04807d2741eadcac8a19e6c",
+  "classes": {
+    "0": "Hardhat",
+    "1": "NO-Hardhat"
+  },
+  "imgsz": 640,
+  "converter": {
+    "ultralytics": "8.3.40",
+    "coremltools": "7.2",
+    "torch": "2.2.2",
+    "python": "3.11.16"
+  },
+  "licence_status": "UNRESOLVED: repository declares no licence; YOLOv8 code is AGPL-3.0; dataset licence must be checked on Roboflow Universe before redistribution."
+}

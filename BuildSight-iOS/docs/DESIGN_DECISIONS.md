@@ -1,0 +1,15 @@
+# Design decisions (defend these in the viva)
+
+1. **Swift package for everything testable.** Domain, rules, view models, store, sync, REST and helmet logic live in `BuildSightKit` (no UIKit), so they compile and test with `swiftc` on a laptop. The app target is a thin SwiftUI/hardware layer. Trade-off: two targets to wire.
+2. **MVVM with pure rules.** Views render state; view models coordinate; `IssueWorkflow` etc. decide. The same rule is used by the repository (enforcement) and the UI (`availableTransitions`), so the UI cannot offer what the rule would reject.
+3. **Core Data as payload + indexed columns.** One `RecordEntity` (type, project, parent, sortDate, syncState, version, JSON payload) plus `OperationEntity` and `DraftEntity`. Why: every query filters on indexed columns; payloads decode to the same Swift types; no migration per field. Cost: no Core Data joins (relationships are IDs). Model is built in code so it compiles without an `.xcdatamodeld`.
+4. **Local-first, one transaction.** `commit([RecordWrite])` saves records and queue entries together; edits to a not-yet-sent record coalesce but keep the first base snapshot.
+5. **Sync correctness.** Operation id = idempotency key; server `upsert_record` ignores replays; version mismatch → 409 → fetch server copy → field-level three-way merge (server wins on true conflicts, reported). Photo upload is a separate step whose object path is remembered, so a failed upsert never re-uploads. Offline stops the drain; 5xx backs off 5 s → 15 min; 4xx parks as Failed for the user. "Synced" is set only after success.
+6. **Helmet detection is a suggestion.** Missing-helmet needs a trained `NO-Hardhat` detection above a flag threshold; empty/blurry/small/low-confidence results are "unable to assess". Wording never says "safe". Issues are High/Safety, labelled machine-generated, awaiting review, closable only after review. Re-analysis updates the same rows (ids derived from the photo).
+7. **Original evidence is never modified.** Boxes are drawn at display time.
+8. **No fake coordinates.** `LocationFix` is `.gps` or `.unavailable(reason)`; zone is separate (area or QR).
+9. **No safety score.** Plain defined counts instead.
+10. **Biometrics gate, never authenticate.** `.deviceOwnerAuthenticationWithBiometrics` only; lockout → account password; expired sessions need the password.
+11. **Colour.** White on #FF5A00 is ~3:1, so primary buttons use a dark label; orange text uses #C2410C. A unit test enforces 4.5:1 for all token pairs. Light appearance only (sunlight palette), a known accessibility trade-off.
+12. **iPhone vs iPad.** iPhone: tab bar + always-reachable capture button (one-handed, gloves). iPad: sidebar + list/detail review for supervisors (queue stays visible while one record is inspected), Site Map and filters get the room.
+13. **Backend.** Supabase realises the proposal's REST + realtime + PostgreSQL + object storage; RLS is the server-side authorisation. Realtime subscription is not built; pull-on-foreground/connectivity is.

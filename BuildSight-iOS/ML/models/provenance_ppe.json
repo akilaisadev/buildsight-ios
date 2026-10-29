@@ -1,0 +1,24 @@
+{
+  "model": "PPEDetector.mlpackage",
+  "architecture": "YOLOv8s (Ultralytics 8.4.183), Core ML mlprogram with NMS, input 640x640",
+  "classes": {"0": "helmet", "1": "no-helmet", "2": "vest", "3": "gloves", "4": "no-gloves"},
+  "training_script": "ML/training/train_ppe_v2.py (30 epochs, seed 0, patience 8, Colab T4)",
+  "training_data": [
+    {"name": "Ultralytics Construction-PPE", "licence_stated": "AGPL-3.0", "images_used": "1,132 train (x3 repeat), 143 val, 141 test",
+     "classes_used": "helmet, gloves, vest, no_helmet, no_gloves"},
+    {"name": "Roboflow ppe-detection_data-adcya v3 via Hugging Face Mr-Kamal/PPE_Detection", "licence_stated": "CC BY 4.0",
+     "images_used": "5,000 train (random cap), 600 val, 1,234 test", "classes_used": "helmet, vest, gloves"}
+  ],
+  "zip_sha256": "bfab6fb6c7992d39480604efe776201f0564a285be376d06b13c05d8aa431b9b",
+  "zip_bytes": 20643557,
+  "held_out_test": {
+    "construction_ppe_141_images_all_classes": {"map50": 0.548, "helmet_ap50": 0.897, "no_helmet_ap50": 0.125, "vest_ap50": 0.871, "gloves_ap50": 0.754, "no_gloves_ap50": 0.095},
+    "roboflow_1234_images_helmet_vest_gloves_only": {"map50": 0.708, "helmet_ap50": 0.760, "vest_ap50": 0.828, "gloves_ap50": 0.535}
+  },
+  "caveats": [
+    "Test splits come from the same sources as training data; not evidence of phone-photo performance.",
+    "no-helmet and no-gloves are weak (AP50 about 0.1): treat as reviewer hints, never as violations.",
+    "No no-vest class: a missing vest cannot be detected.",
+    "Licence unresolved: AGPL-3.0 training data and AGPL-3.0 Ultralytics code; redistribution terms not cleared."
+  ]
+}

@@ -1,0 +1,202 @@
+import SwiftUI
+import AVFoundation
+import BuildSightKit
+
+struct CaptureFlowView: View {
+    @EnvironmentObject private var context: ScreenContext
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var camera = CameraService()
+    @State private var model: CaptureViewModel?
+    @State private var showScanner = false
+    @State private var scanMessage: String?
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let model { content(model) } else { ProgressView() }
+            }
+            .background(Theme.background)
+            .navigationTitle("Capture Evidence").inlineNavigationTitle()
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { model?.cancel(); dismiss() } } }
+        }
+        .task {
+            guard model == nil, let snapshot = context.data.snapshot else { return }
+            model = CaptureViewModel(actor: context.actor, areas: snapshot.areas, store: context.store, files: context.files, location: context.workspace.location, workflow: context.workspace.helmet, sync: context.sync)
+            context.workspace.location.requestAuthorisation()
+            await camera.prepare()
+        }
+        .onDisappear { camera.stop() }
+    }
+
+    @ViewBuilder private func content(_ model: CaptureViewModel) -> some View {
+        switch model.phase {
+        case .camera: cameraStep(model)
+        case .review, .saving: ReviewStep(model: model, showScanner: $showScanner, scanMessage: scanMessage)
+                .sheet(isPresented: $showScanner) { scanner(model) }
+        case .analysing: VStack(spacing: 16) { ProgressView(); Text("Analysing on this device…").font(.headline); Text("Your photo is already saved.").foregroundStyle(Theme.secondaryText) }
+        case .finished: if let outcome = model.outcome { ResultStep(outcome: outcome, model: model, camera: camera, dismiss: { dismiss() }) }
+        case .failed(let message): VStack(spacing: 16) { ErrorBanner(message: message); Button("Try Again") { model.retake() }.buttonStyle(SecondaryButtonStyle()) }.padding()
+        }
+    }
+
+    @ViewBuilder private func cameraStep(_ model: CaptureViewModel) -> some View {
+        switch camera.availability {
+        case .ready:
+            ZStack(alignment: .bottom) {
+                CameraPreview(session: camera.session).ignoresSafeArea(edges: .bottom)
+                Button {
+                    Task { if let data = await camera.capture() { model.photoCaptured(data) } }
+                } label: {
+                    Circle().strokeBorder(.white, lineWidth: 6).background(Circle().fill(Theme.accent).padding(9)).frame(width: 92, height: 92)
+                }
+                .padding(.bottom, 28)
+                .accessibilityLabel("Take photo")
+            }
+            .overlay(alignment: .topTrailing) {
+                Button { showScanner = true } label: {
+                    Label("Scan area code", systemImage: "qrcode.viewfinder").font(.headline)
+                        .padding(.horizontal, 16).frame(minHeight: Glove.target)
+                        .background(.ultraThinMaterial, in: Capsule())
+                }
+                .padding(16)
+                .accessibilityHint("Scan the QR code for the area you are in")
+            }
+            .sheet(isPresented: $showScanner) { scanner(model) }
+        case .notDetermined: ProgressView()
+        case .denied: EmptyStateView(symbol: "camera.fill", title: "Camera access is off", message: "BuildSight needs the camera to record site evidence. Turn it on in Settings.", actionTitle: "Open Settings") { openSettings() }
+        case .restricted: EmptyStateView(symbol: "lock.fill", title: "Camera is restricted", message: "Screen Time or device management is blocking the camera.")
+        case .noCamera: EmptyStateView(symbol: "camera.metering.unknown", title: "No camera available", message: "This device has no camera (for example the Simulator). Evidence capture needs a real camera.")
+        }
+    }
+
+    private func scanner(_ model: CaptureViewModel) -> some View {
+        NavigationStack {
+            QRScannerView { code in
+                switch AreaQRPayload.resolve(code, activeProject: context.actor.projectID, areas: model.areas) {
+                case .success(let area): model.apply(scannedArea: area); scanMessage = "Area set to \(area.displayName)"; showScanner = false
+                case .failure(.wrongProject): scanMessage = "That code belongs to a different project."
+                case .failure(.unknownArea): scanMessage = "That area isn't part of this project."
+                case .failure(.notABuildSightCode): scanMessage = "That isn't a BuildSight area code."
+                }
+            }
+            .ignoresSafeArea()
+            .overlay(alignment: .bottom) { if let scanMessage { ErrorBanner(message: scanMessage).padding() } }
+            .navigationTitle("Scan Area Code").inlineNavigationTitle()
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { showScanner = false } } }
+        }
+    }
+
+    private func openSettings() {
+        #if os(iOS)
+        if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+        #endif
+    }
+}
+
+private struct ReviewStep: View {
+    @Bindable var model: CaptureViewModel
+    @Binding var showScanner: Bool
+    let scanMessage: String?
+    @EnvironmentObject private var context: ScreenContext
+
+    var body: some View {
+        Form {
+            if let jpeg = model.capturedJPEG, let image = UIImage(data: jpeg) {
+                Section { Image(uiImage: image).resizable().scaledToFit().clipShape(RoundedRectangle(cornerRadius: 12)).accessibilityLabel("Captured photo preview") }
+            }
+            Section("Where") {
+                Picker("Site area", selection: $model.selectedAreaID) {
+                    Text("Choose area").tag(UUID?.none)
+                    ForEach(model.areas) { Text($0.displayName).tag(Optional($0.id)) }
+                }
+                Button { showScanner = true } label: { Label("Scan area QR code", systemImage: "qrcode.viewfinder") }
+                if let scanMessage { Text(scanMessage).font(.footnote).foregroundStyle(Theme.secondaryText) }
+                locationRow
+            }
+            Section("Details") {
+                Picker("Category", selection: $model.category) { ForEach(PhotoCategory.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) } }
+                TextField("Note (optional)", text: $model.note, axis: .vertical).lineLimit(1...4)
+            }
+            Section {
+                Button { Task { await model.saveAndAnalyse() } } label: { if model.phase == .saving { ProgressView() } else { Text("Save & Check Helmets") } }
+                    .buttonStyle(PrimaryButtonStyle()).disabled(!model.canSave).listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
+                Button("Retake") { model.retake() }.buttonStyle(SecondaryButtonStyle()).listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
+            } footer: { Text("Time, location and your name are recorded automatically. Helmet analysis runs on this device; the photo is saved first.") }
+        }
+    }
+
+    @ViewBuilder private var locationRow: some View {
+        switch model.locationPreview {
+        case nil: Label("Finding GPS position…", systemImage: "location").foregroundStyle(Theme.secondaryText)
+        case .gps(let p)?:
+            Label(LocationFix.gps(p).isApproximate ? "Approximate GPS (±\(Int(p.horizontalAccuracy)) m)" : "GPS position (±\(Int(p.horizontalAccuracy)) m)", systemImage: "location.fill")
+        case .unavailable(let why)?:
+            Label("No GPS: \(Self.reason(why)). The site area is still recorded.", systemImage: "location.slash")
+        }
+    }
+
+    static func reason(_ r: LocationUnavailableReason) -> String {
+        switch r {
+        case .permissionDenied: "location access is off"
+        case .permissionRestricted: "location is restricted"
+        case .servicesDisabled: "location services are off"
+        case .noFixYet: "no signal yet"
+        case .timedOut: "timed out"
+        }
+    }
+}
+
+private struct ResultStep: View {
+    let outcome: CaptureOutcome
+    let model: CaptureViewModel
+    let camera: CameraService
+    let dismiss: () -> Void
+    @EnvironmentObject private var context: ScreenContext
+    @EnvironmentObject private var router: AppRouter
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                EvidenceImage(photo: outcome.photo, files: context.files, analysis: outcome.analysis).clipShape(RoundedRectangle(cornerRadius: 12))
+                Card {
+                    VStack(alignment: .leading, spacing: 8) {
+                        SectionHeader(title: "Helmet check")
+                        Text(summary).font(.headline)
+                        Text(detail).font(.subheadline).foregroundStyle(Theme.secondaryText)
+                        if let equipment = outcome.analysis.equipment {
+                            Text(equipment.summary).font(.subheadline)
+                            Text("Vests and gloves are reported only when seen. A photo with none says nothing about whether they were worn.").font(.caption).foregroundStyle(Theme.secondaryText)
+                        }
+                        if let ms = outcome.analysis.inferenceMilliseconds { Text("Analysed on this device in \(Int(ms)) ms · model \(outcome.analysis.modelIdentifier)").font(.caption).foregroundStyle(Theme.secondaryText) }
+                    }
+                }
+                if let issue = outcome.issue {
+                    Card {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label(outcome.createdNewIssue ? "Safety issue created" : "Linked safety issue", systemImage: "exclamationmark.triangle.fill").font(.headline)
+                            PriorityChip(priority: issue.priority)
+                            ReviewChip(review: issue.review)
+                            Button("Open Issue") { dismiss(); router.open(.issue(projectID: issue.projectID, issueID: issue.id), activeProject: issue.projectID, isRegular: false) }.buttonStyle(SecondaryButtonStyle())
+                        }
+                    }
+                }
+                Button("Take Another") { model.reset() }.buttonStyle(PrimaryButtonStyle())
+                Button("Done") { dismiss() }.buttonStyle(SecondaryButtonStyle())
+            }.padding()
+        }
+    }
+
+    private var summary: String {
+        switch outcome.analysis.state {
+        case .finished(let o): o.summary
+        case .failed: "Analysis unavailable"
+        case .pending: "Analysing…"
+        }
+    }
+    private var detail: String {
+        switch outcome.analysis.state {
+        case .failed(let m): "\(m). The photo is saved; you can analyse it again from its detail screen."
+        default: "This checks helmets only, on the workers visible in this photo. It is a suggestion for a person to review, not a safety clearance."
+        }
+    }
+}
