@@ -94,6 +94,7 @@ struct SettingsView: View {
     @State private var confirmSignOut: SignOutDecision?
     @State private var showSyncCenter = false
     @AppStorage(AppearanceSetting.key) private var appearanceRaw = "system"
+    @AppStorage("geofence.enabled") private var geofenceOn = true
 
     private var session: SessionManager { environment.session }
 
@@ -137,6 +138,11 @@ struct SettingsView: View {
                 if notificationStatus == .notDetermined { Button("Allow Reminders") { Task { _ = await context.workspace.notifications.requestAuthorisation(); await refresh() } } }
             } header: { Text("Notifications") } footer: { Text("Reminders are scheduled on this device and work offline. Remote push notifications from the server are not part of this build.") }
 
+            Section {
+                Toggle("Site arrival alerts", isOn: $geofenceOn).frame(minHeight: Glove.target)
+            } header: { Text("Location") } footer: {
+                Text("Alerts when you arrive at or leave a site. Needs location access set to Always.")
+            }
             Section("Site") {
                 NavigationLink { AreaQRCodesView() } label: { Label("Area QR codes", systemImage: "qrcode") }
                     .frame(minHeight: Glove.target)

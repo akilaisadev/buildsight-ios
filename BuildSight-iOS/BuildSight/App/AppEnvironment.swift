@@ -28,6 +28,10 @@ final class Workspace: ObservableObject {
     let analyzerDescriptor: HelmetModelDescriptor?
     let sync: SyncCoordinator
     let notifications = NotificationScheduler()
+    /// Arrival/departure alerts for sites with a location in the project data.
+    lazy var geofence = GeofenceService { [notifications] id, title, body in
+        await notifications.alert(id: id, title: title, body: body, deepLink: nil)
+    }
     let repository: ProjectRepository
     let sessionGate: ReauthenticationGate
 

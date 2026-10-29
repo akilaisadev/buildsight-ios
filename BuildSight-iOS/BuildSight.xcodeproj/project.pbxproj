@@ -33,6 +33,7 @@
 		91A3340BE7C96E48261CC522 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */; };
 		A41F2FE2919EE63EC36C3529 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */; };
 		B268AD9C0C374E1D4F634EBF /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F59CEAEEDE75E4A6F9FBAF /* SyncCoordinator.swift */; };
+		B8ACEAF75C331128BEC3308D /* GeofenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2072E71FA6952C882AE9DAD /* GeofenceService.swift */; };
 		BF7135E430CDFC34AB63CFDD /* QRCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36296FB7776249BFE87ED0A /* QRCode.swift */; };
 		C928BAF71C10CC48F5685C64 /* PhonePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB08834FBC6D2DF2E2A5B30 /* PhonePreview.swift */; };
 		D790E9B2087670561C3ECCE8 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA84E37C25456F81815419C /* HomeView.swift */; };
@@ -113,6 +114,7 @@
 		C91C993FFA399D46E7B88A46 /* provenance.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = provenance.json; sourceTree = "<group>"; };
 		C987AB285A94B05BB4182460 /* AuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViews.swift; sourceTree = "<group>"; };
 		CDB4D4C47AAB7778D9FD196B /* BiometricService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricService.swift; sourceTree = "<group>"; };
+		D2072E71FA6952C882AE9DAD /* GeofenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofenceService.swift; sourceTree = "<group>"; };
 		D36296FB7776249BFE87ED0A /* QRCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCode.swift; sourceTree = "<group>"; };
 		D5EE3E62090BAA37CC2C49E4 /* AreaQRCodesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaQRCodesView.swift; sourceTree = "<group>"; };
 		D9A0B7EE8378559AD8A74600 /* LaunchAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAnimation.swift; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				CDB4D4C47AAB7778D9FD196B /* BiometricService.swift */,
 				C3B45374CEB8FF826E26ADD6 /* CameraService.swift */,
 				F7F90CF599A2FE597E51A382 /* ConnectivityMonitor.swift */,
+				D2072E71FA6952C882AE9DAD /* GeofenceService.swift */,
 				B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */,
 				909599C5302FC01EF4C2272F /* LocationService.swift */,
 				FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */,
@@ -538,6 +541,7 @@
 				0C9BA79E1BA6E16917DD8BD9 /* Components.swift in Sources */,
 				F2DCBA01E7C0498BD3B2DAF3 /* ConnectivityMonitor.swift in Sources */,
 				01E8B9D70B666D1F9AB34204 /* EvidenceImage.swift in Sources */,
+				B8ACEAF75C331128BEC3308D /* GeofenceService.swift in Sources */,
 				D790E9B2087670561C3ECCE8 /* HomeView.swift in Sources */,
 				71EF99080B31BB409C0F3FE7 /* InspectionViews.swift in Sources */,
 				EB6CDEEDBD31D3FA02746411 /* IssueViews.swift in Sources */,

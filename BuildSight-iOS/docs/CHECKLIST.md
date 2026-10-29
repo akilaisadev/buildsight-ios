@@ -15,7 +15,7 @@ No Apple Developer account is used anywhere in this project.
 | 8 | Activity timeline and site map | Done | Site Log (timeline with filters), map of GPS records with a no-location note | Map shows a site only once records have GPS; the demo project has none |
 | 9 | Inspection | Done | Inspection checklist, progress saving, completion rules | Demo has no inspections yet |
 | Adv 1 | Core ML | Done (limited) | On-device YOLOv8 model: helmet, no helmet, vest, gloves, no gloves | "No helmet" and "no gloves" are weak (AP about 0.1); used as review hints only |
-| Adv 2 | MapKit | Done | Apple Maps in Site, user location, record pins | Demo has no GPS records yet, so pins are not shown |
+| Adv 2 | MapKit + Core Location | Done | Map of real records with GPS; **geofencing**: each project's site location (from the database) is a monitored region, and arriving or leaving raises an alert (Settings → Site arrival alerts) | Verified in the simulator: moving onto the Colombo site logged "entered", moving away logged "left". Needs Always location access. Planner logic covered by 5 Swift Testing tests |
 | Adv 3 | WidgetKit | Done (limited) | Home-screen flag widget (`BuildSightFlagWidget`) fed from the app through an App Group | Built into the app, not checked on a home screen yet |
 | Adv 4 | QR codes | Done | Printable area QR codes (Settings → Area QR codes); "Scan area code" on the camera screen tags a photo to the area | QR text verified: a generated code decodes to the exact area link. Live camera scan needs a real iPhone |
 

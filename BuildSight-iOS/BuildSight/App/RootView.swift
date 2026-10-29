@@ -45,6 +45,7 @@ struct WorkspaceRoot: View {
     @EnvironmentObject private var environment: AppEnvironment
     @EnvironmentObject private var router: AppRouter
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @AppStorage("geofence.enabled") private var geofenceOn = true
 
     var body: some View {
         Group {
@@ -57,6 +58,10 @@ struct WorkspaceRoot: View {
         }
         .safeAreaInset(edge: .top) {
             if case .expired = environment.session.state { ExpiredSessionBanner() }
+        }
+        // Re-plan site regions whenever the project list or the setting changes.
+        .task(id: "\(workspace.selection.projects.map(\.id))-\(geofenceOn)") {
+            workspace.geofence.update(GeofencePlanner.regions(for: workspace.selection.projects), enabled: geofenceOn)
         }
         .onChange(of: router.pendingDeepLink) { _, link in
             guard let link else { return }

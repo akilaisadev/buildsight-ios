@@ -37,6 +37,8 @@
 	<string>BuildSight uses the camera to record site photos as evidence and to scan area QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>BuildSight uses Face ID to unlock the app on this device.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>BuildSight alerts you when you arrive at or leave a site, so evidence is logged to the right project.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>BuildSight attaches your position to photos, issues and inspections so supervisors can see where they happened.</string>
 	<key>UILaunchScreen</key>
