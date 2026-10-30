@@ -39,7 +39,8 @@ View (SwiftUI)  →  ViewModel (@Observable, @MainActor)  →  Repository / Work
 4. **Real iPhone or iPad:** run `./scripts/setup_signing.sh` once. It writes `Config/Signing.xcconfig` (git-ignored) with your team ID and a bundle id unique to you (`com.buildsight.<your account name>`), so Apple never says the bundle id or app group is "not available". If it cannot find your team, pass it: `./scripts/setup_signing.sh YOURTEAMID` (Xcode > Settings > Accounts). Do **not** type a bundle id into Xcode's Signing screen; the config file owns it. Then use the **BuildSight** scheme (not BuildSightWidgets), select the device, press Cmd+R, and trust your developer profile on the device (Settings > General > VPN & Device Management; also enable Developer Mode).
    - Already hit "Application Group ... is not available"? `git checkout -- BuildSight.xcodeproj && git pull`, run the script above, then Product > Clean Build Folder.
 5. **Helmet model:** `ML/models/PPEDetector.mlpackage` (and the helmet-only `HelmetDetector.mlpackage`) are committed, and a build phase (`scripts/bundle_models.sh`) compiles them into the app, so every build includes them. If a build ever says "No helmet model is installed", the folder is missing them: `git pull`, or `git checkout -- ML/models`.
-6. Backend setup from scratch: [docs/BACKEND_SETUP.md](docs/BACKEND_SETUP.md). Tests: `cd Packages/BuildSightKit && swift test`.
+6. **"Missing package product BuildSightKit" or other odd Xcode errors after a pull:** quit Xcode and run `./scripts/reset_xcode.sh`, then open the project again.
+7. Backend setup from scratch: [docs/BACKEND_SETUP.md](docs/BACKEND_SETUP.md). Tests: `cd Packages/BuildSightKit && swift test`.
 
 ## Helmet model
 
