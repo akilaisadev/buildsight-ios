@@ -31,7 +31,7 @@ struct RootView: View {
         .animation(.default, value: environment.session.state)
         .onChange(of: environment.session.state) { _, _ in environment.rebuildWorkspace() }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + (reduceMotion ? 0.1 : 1.7)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + (reduceMotion ? 0.1 : 2.8)) {
                 withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) { launchFinished = true }
             }
         }
