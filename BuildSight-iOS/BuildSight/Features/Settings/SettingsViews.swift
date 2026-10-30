@@ -151,6 +151,7 @@ struct SettingsView: View {
             Section("Data") {
                 NavigationLink("Sync Center", value: Route.syncCenter)
                 if let d = context.workspace.analyzerDescriptor { LabeledContent("Helmet model", value: "\(d.identifier) \(d.version)") }
+                else if let problem = context.workspace.analyzerProblem { Text("\(problem). Photos are still saved; analysis is unavailable.").font(.footnote).foregroundStyle(Theme.status("high").fg) }
                 else { Text("No helmet model is installed in this build. Photos are still saved; analysis is unavailable.").font(.footnote).foregroundStyle(Theme.secondaryText) }
             }
             Section { Button("Sign Out", role: .destructive) { askSignOut = true } }

@@ -1,6 +1,9 @@
 // Committed build settings. Backend.xcconfig holds the public URL and publishable key
-// so a fresh clone works. A git-ignored Secrets.xcconfig, if present, overrides it.
+// so a fresh clone works. Git-ignored Secrets.xcconfig and Signing.xcconfig, if present,
+// override the values below (see their .example files).
+BUILDSIGHT_BUNDLE_ID = com.buildsight99.app
 BUILDSIGHT_BACKEND_URL =
 BUILDSIGHT_ANON_KEY =
 #include "Backend.xcconfig"
 #include? "Secrets.xcconfig"
+#include? "Signing.xcconfig"

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import os
 import WidgetKit
 import BuildSightKit
 
@@ -26,6 +27,9 @@ final class Workspace: ObservableObject {
     let location: LocationService
     let helmet: HelmetWorkflow
     let analyzerDescriptor: HelmetModelDescriptor?
+    /// Set when a model is bundled but could not be loaded, so the app never reports a broken
+    /// model as "no model installed".
+    let analyzerProblem: String?
     let sync: SyncCoordinator
     let notifications = NotificationScheduler()
     /// Arrival/departure alerts for sites with a location in the project data.
@@ -49,8 +53,10 @@ final class Workspace: ObservableObject {
 
         // The detector is optional at build time: if no model is bundled the
         // workflow records a failed analysis and capture still works.
-        let analyzer = Self.loadAnalyzer()
+        let loaded = Self.loadAnalyzer()
+        let analyzer = loaded.analyzer
         analyzerDescriptor = analyzer?.descriptor
+        analyzerProblem = loaded.problem
         let evidence = files
         helmet = HelmetWorkflow(analyzer: analyzer, store: store) { evidence.url(forFilename: $0.localFilename) }
 
@@ -62,14 +68,20 @@ final class Workspace: ObservableObject {
         sync = SyncCoordinator(engine: engine, pull: PullService(store: store, remote: backend), store: store, widget: publisher, reminders: notifications, actorProvider: { selection.actor }, projectIDs: { profile.projectIDs }, onPulled: { await selection.load() }, onAuthExpired: { session.sessionDidExpire() })
     }
 
-    private static func loadAnalyzer() -> CoreMLHelmetAnalyzer? {
+    private static func loadAnalyzer() -> (analyzer: CoreMLHelmetAnalyzer?, problem: String?) {
         // Prefer the multi-class PPE model; fall back to the helmet-only one.
-        if let url = Bundle.main.url(forResource: "PPEDetector", withExtension: "mlmodelc"),
-           let analyzer = try? CoreMLHelmetAnalyzer(modelURL: url, descriptor: .ppeYOLOv8s) {
-            return analyzer
+        var problem: String?
+        let candidates: [(String, HelmetModelDescriptor)] = [("PPEDetector", .ppeYOLOv8s), ("HelmetDetector", .candidateKeremberkeYOLOv8n)]
+        for (name, descriptor) in candidates {
+            guard let url = Bundle.main.url(forResource: name, withExtension: "mlmodelc") else { continue }
+            do {
+                return (try CoreMLHelmetAnalyzer(modelURL: url, descriptor: descriptor), problem)
+            } catch {
+                problem = "\(name) is bundled but could not be loaded: \(error.localizedDescription)"
+                Logger(subsystem: "com.buildsight.app", category: "model").error("\(problem ?? "", privacy: .public)")
+            }
         }
-        guard let url = Bundle.main.url(forResource: "HelmetDetector", withExtension: "mlmodelc") else { return nil }
-        return try? CoreMLHelmetAnalyzer(modelURL: url, descriptor: .candidateKeremberkeYOLOv8n)
+        return (nil, problem)
     }
 }
 

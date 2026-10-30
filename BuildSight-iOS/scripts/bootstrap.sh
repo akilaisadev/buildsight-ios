@@ -13,16 +13,17 @@ if [ ! -f Config/Secrets.xcconfig ]; then
   echo "      Copy Config/Secrets.xcconfig.example to Config/Secrets.xcconfig and add the"
   echo "      backend URL and publishable key from the project owner."
 fi
-# The Core ML models are not in the repository (licence). Leave out any that are
-# missing so the project still builds; the app then reports "no model installed".
-python3 - <<'PY'
-import os, re
-spec = open("project.yml").read()
-def keep(m):
-    return m.group(0) if os.path.exists(m.group(1)) else ""
-spec = re.sub(r"      - path: (ML/models/[^\n]+\.mlpackage)\n        optional: true\n", keep, spec)
-open(".project.generated.yml", "w").write(spec)
-PY
-xcodegen generate --spec .project.generated.yml
+# The Core ML models are git-ignored (licence) and are bundled by a build phase
+# (scripts/bundle_models.sh), so the project must not reference them. Move them aside
+# while generating, then put them back.
+ASIDE=$(mktemp -d)
+restore() { find "$ASIDE" -maxdepth 1 -name "*.mlpackage" -exec mv {} ML/models/ \; 2>/dev/null; rmdir "$ASIDE" 2>/dev/null || true; }
+trap restore EXIT
+find ML/models -maxdepth 1 -name "*.mlpackage" -exec mv {} "$ASIDE"/ \;
+xcodegen generate
+restore
+if [ ! -f Config/Signing.xcconfig ]; then
+  echo "Note: to run on a real iPhone, copy Config/Signing.xcconfig.example to Config/Signing.xcconfig and set your team ID."
+fi
 [ "${1:-}" = "--no-open" ] || open BuildSight.xcodeproj
 echo "Done. In Xcode pick an iPhone simulator and press Cmd+R."

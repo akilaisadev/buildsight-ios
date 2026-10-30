@@ -1,0 +1,5 @@
+// Copy to Signing.xcconfig (git-ignored) to run on a real iPhone.
+// Your Apple Developer team ID: Xcode > Settings > Accounts > your team, or developer.apple.com > Membership.
+DEVELOPMENT_TEAM = ABCDE12345
+// If com.buildsight99.app is already taken, pick your own (the widget becomes <id>.widgets):
+// BUILDSIGHT_BUNDLE_ID = com.yourname.buildsight

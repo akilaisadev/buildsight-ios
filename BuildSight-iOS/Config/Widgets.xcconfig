@@ -1,0 +1,3 @@
+// Widget extension settings: its bundle id is the app's plus ".widgets".
+BUILDSIGHT_BUNDLE_ID = com.buildsight99.app
+#include? "Signing.xcconfig"

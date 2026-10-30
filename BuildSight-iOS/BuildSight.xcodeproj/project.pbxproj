@@ -89,10 +89,11 @@
 		37F4C4FC813A1E102B3D031E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		382F0BD81D57DB6FA0FACD46 /* REQUIREMENTS_MATRIX.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = REQUIREMENTS_MATRIX.md; sourceTree = "<group>"; };
 		39A2BC68D7036521E7CCD4BA /* test_schema.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = test_schema.sh; sourceTree = "<group>"; };
-		3E2CEB803BF7D7B31F138B65 /* BuildSightWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BuildSightWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E2CEB803BF7D7B31F138B65 /* BuildSightWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BuildSightWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AF705ED4C638C63521A7482 /* BACKEND_SETUP.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BACKEND_SETUP.md; sourceTree = "<group>"; };
 		5314C156E8B74EC547CAC381 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		56676EF87C57FE68600CEF3D /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		6D738B825D3B57B116482EFB /* make_demo_data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = make_demo_data.swift; sourceTree = "<group>"; };
 		7D7A3B02F3B6E82F5DC311C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7F97851BDA4D328547CEEA01 /* make_seed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = make_seed.swift; sourceTree = "<group>"; };
 		83BF71FC7734CCD3F51CC653 /* CHECKLIST.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHECKLIST.md; sourceTree = "<group>"; };
@@ -105,13 +106,14 @@
 		909599C5302FC01EF4C2272F /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		92973D955F511D485E2572A1 /* BuildSightKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildSightKit; path = Packages/BuildSightKit; sourceTree = SOURCE_ROOT; };
 		95F4A5A7CEAD7F37FD407158 /* provenance_ppe.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = provenance_ppe.json; sourceTree = "<group>"; };
-		961AE25FDEC1EBDA3827DAC2 /* BuildSight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuildSight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		961AE25FDEC1EBDA3827DAC2 /* BuildSight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BuildSight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB0C5BDF5D509DDE1049DB67 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		B1640DF9F855D1D687E27C1C /* MainShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainShell.swift; sourceTree = "<group>"; };
 		B1F5EECD8E298507700052E6 /* train_ppe.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = train_ppe.py; sourceTree = "<group>"; };
 		B23261EECB71635E0EF9E921 /* KNOWN_LIMITATIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = KNOWN_LIMITATIONS.md; sourceTree = "<group>"; };
 		B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStore.swift; sourceTree = "<group>"; };
 		BCA8674415807E0390A39D8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BF4069CFA3496DF1EB93A61C /* Widgets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Widgets.xcconfig; sourceTree = "<group>"; };
 		C1D13584F7F334D36E4E881A /* train_ppe_v2.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = train_ppe_v2.py; sourceTree = "<group>"; };
 		C3B45374CEB8FF826E26ADD6 /* CameraService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraService.swift; sourceTree = "<group>"; };
 		C413A9146567DB841F17D042 /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App.xcconfig; sourceTree = "<group>"; };
@@ -125,7 +127,7 @@
 		DCA84E37C25456F81815419C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		DF3BFD5A7A59B63E6EED27E5 /* BuildSightWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildSightWidget.swift; sourceTree = "<group>"; };
 		E1E72E32B734F0301130D76E /* DESIGN_DECISIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DESIGN_DECISIONS.md; sourceTree = "<group>"; };
-		E3B34019B861193225820F06 /* schema.sql */ = {isa = PBXFileReference; lastKnownFileType = text; path = schema.sql; sourceTree = "<group>"; };
+		E3B34019B861193225820F06 /* schema.sql */ = {isa = PBXFileReference; path = schema.sql; sourceTree = "<group>"; };
 		EB9C4D5C0C98AC2C53863F66 /* WorkingSites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingSites.swift; sourceTree = "<group>"; };
 		ECB996C8D03F250E46D5939E /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
 		EEF6404EB331B39A44297DD4 /* CaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFlowView.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 		374477BFD83A40094B9CEF92 /* tools */ = {
 			isa = PBXGroup;
 			children = (
+				6D738B825D3B57B116482EFB /* make_demo_data.swift */,
 				7F97851BDA4D328547CEEA01 /* make_seed.swift */,
 			);
 			path = tools;
@@ -208,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				C413A9146567DB841F17D042 /* App.xcconfig */,
+				BF4069CFA3496DF1EB93A61C /* Widgets.xcconfig */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -451,6 +455,7 @@
 				9772098BAC710EFBFBA4669F /* Resources */,
 				FB33474FFA7380EAE56234D8 /* Frameworks */,
 				B352D0130601DFA0AEB6602E /* Embed Foundation Extensions */,
+				20DC44828819B727479D5E40 /* Bundle Core ML models */,
 			);
 			buildRules = (
 			);
@@ -491,7 +496,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2440816A6237B96B8228AF45 = {
+						DevelopmentTeam = "";
+					};
+					60DA303C79F76809A082C67B = {
+						DevelopmentTeam = "";
+					};
+				};
 			};
 			buildConfigurationList = DD2F07EB0FEAA896EB341698 /* Build configuration list for PBXProject "BuildSight" */;
 			developmentRegion = en;
@@ -526,6 +539,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		20DC44828819B727479D5E40 /* Bundle Core ML models */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle Core ML models";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\n# Xcode build phase: compile ML/models/*.mlpackage into the app bundle when they exist.\n# The model weights are git-ignored (licence), so a fresh clone has none; the app still\n# builds and reports \"no helmet model installed\". Drop PPEDetector.mlpackage (and optionally\n# HelmetDetector.mlpackage) into ML/models/ and build again to include them.\nset -e\nDEST=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nFOUND=0\nfor NAME in PPEDetector HelmetDetector; do\n  SRC=\"$SRCROOT/ML/models/$NAME.mlpackage\"\n  rm -rf \"$DEST/$NAME.mlmodelc\"\n  if [ -d \"$SRC\" ]; then\n    xcrun coremlcompiler compile \"$SRC\" \"$DEST\"\n    FOUND=$((FOUND + 1))\n  fi\ndone\nif [ \"$FOUND\" -eq 0 ]; then\n  echo \"note: no Core ML model in ML/models, building without a helmet model\"\nelse\n  echo \"Bundled $FOUND Core ML model(s)\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		44A306E49C683DE5C0C19B4B /* Sources */ = {
@@ -625,7 +660,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -652,14 +686,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BuildSight/BuildSight.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = U25S34NL72;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = BuildSight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUILDSIGHT_BUNDLE_ID)";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -704,7 +738,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -738,14 +771,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BuildSight/BuildSight.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = U25S34NL72;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = BuildSight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUILDSIGHT_BUNDLE_ID)";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -754,9 +787,9 @@
 		};
 		CC91D2E821D2D45B4089951D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF4069CFA3496DF1EB93A61C /* Widgets.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Widgets/Widgets.entitlements;
-				DEVELOPMENT_TEAM = U25S34NL72;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -764,7 +797,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUILDSIGHT_BUNDLE_ID).widgets";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -773,9 +806,9 @@
 		};
 		FDE8E5C837FC4A122E189089 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF4069CFA3496DF1EB93A61C /* Widgets.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Widgets/Widgets.entitlements;
-				DEVELOPMENT_TEAM = U25S34NL72;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -783,7 +816,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUILDSIGHT_BUNDLE_ID).widgets";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

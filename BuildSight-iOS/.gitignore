@@ -6,3 +6,4 @@ ML/models/*.mlpackage
 xcuserdata/
 *.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 Packages/BuildSightKit/.build/
+Config/Signing.xcconfig

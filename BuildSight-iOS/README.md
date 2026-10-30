@@ -33,11 +33,12 @@ View (SwiftUI)  →  ViewModel (@Observable, @MainActor)  →  Repository / Work
 
 ## Setup
 
-1. Install Xcode 16+ and `brew install xcodegen`.
-2. Backend: follow [docs/BACKEND_SETUP.md](docs/BACKEND_SETUP.md) (Supabase project, run `schema.sql`, create a user).
-3. `cp Config/Secrets.xcconfig.example Config/Secrets.xcconfig` and fill in the URL and anon key.
-4. `xcodegen generate && open BuildSight.xcodeproj`, set your signing team, run on a device (the camera needs one).
-5. Tests: `cd Packages/BuildSightKit && swift test` (or `./scripts/run-kit-tests.sh` where SwiftPM is unavailable).
+1. Install Xcode 16+ (`./scripts/bootstrap.sh` installs XcodeGen and generates the project if you edit `project.yml`).
+2. Open `BuildSight.xcodeproj`. The backend URL and publishable key are committed in `Config/Backend.xcconfig`, so a fresh clone connects without any file to create. To use a different backend, copy `Config/Secrets.xcconfig.example` to `Config/Secrets.xcconfig` (git-ignored; it overrides).
+3. **Simulator:** pick an iPhone or iPad simulator and press Cmd+R. No signing needed.
+4. **Real iPhone or iPad:** copy `Config/Signing.xcconfig.example` to `Config/Signing.xcconfig` and set `DEVELOPMENT_TEAM` to your team ID (and `BUILDSIGHT_BUNDLE_ID` if `com.buildsight99.app` is taken on your team). Use the **BuildSight** scheme (not BuildSightWidgets), select the device, press Cmd+R, then trust your developer profile on the device (Settings > General > VPN & Device Management; also enable Developer Mode).
+5. **Helmet model (optional):** put `PPEDetector.mlpackage` (and optionally `HelmetDetector.mlpackage`) in `ML/models/` and build. A build phase (`scripts/bundle_models.sh`) compiles them into the app; without them the app still works and Settings says no model is installed. Never commit them (licence).
+6. Backend setup from scratch: [docs/BACKEND_SETUP.md](docs/BACKEND_SETUP.md). Tests: `cd Packages/BuildSightKit && swift test`.
 
 ## Helmet model
 
