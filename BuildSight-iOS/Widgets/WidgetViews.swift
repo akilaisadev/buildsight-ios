@@ -23,8 +23,13 @@ private extension Color {
 
 private extension WidgetSnapshot {
     /// Ring colour: red if something critical is open, orange if flags wait for a person, else green.
-    var tint: Color { openCritical > 0 ? Palette.red : unreviewedFlags > 0 ? Palette.orange : Palette.green }
-    var backlogShare: Double { min(Double(unreviewedFlags) / 10, 1) }
+    var tint: Color {
+        switch status {
+        case .critical: Palette.red
+        case .needsReview: Palette.orange
+        case .allClear: Palette.green
+        }
+    }
 }
 
 struct WidgetBackdrop: View {

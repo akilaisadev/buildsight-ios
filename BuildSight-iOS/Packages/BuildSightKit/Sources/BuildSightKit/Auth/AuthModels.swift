@@ -57,7 +57,29 @@ public protocol SecureSessionStore: Sendable {
     func clear()
 }
 
-public enum BiometricKind: Sendable, Equatable { case faceID, touchID, opticID, none }
+public enum BiometricKind: Sendable, Equatable {
+    case faceID, touchID, opticID, none
+
+    /// Name shown to the user, or nil when the device has no biometrics.
+    public var displayName: String? {
+        switch self {
+        case .faceID: "Face ID"
+        case .touchID: "Touch ID"
+        case .opticID: "Optic ID"
+        case .none: nil
+        }
+    }
+
+    /// SF Symbol for the sensor, or nil when the device has no biometrics.
+    public var symbolName: String? {
+        switch self {
+        case .faceID: "faceid"
+        case .touchID: "touchid"
+        case .opticID: "opticid"
+        case .none: nil
+        }
+    }
+}
 
 public enum BiometricAvailability: Equatable, Sendable {
     case available(BiometricKind)

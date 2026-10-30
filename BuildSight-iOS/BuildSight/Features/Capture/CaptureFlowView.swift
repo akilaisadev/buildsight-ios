@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import PhotosUI
 import BuildSightKit
 
 struct CaptureFlowView: View {
@@ -9,6 +10,8 @@ struct CaptureFlowView: View {
     @State private var model: CaptureViewModel?
     @State private var showScanner = false
     @State private var scanMessage: String?
+    @State private var pickerItem: PhotosPickerItem?
+    @State private var uploadError: String?
 
     var body: some View {
         NavigationStack {
@@ -16,6 +19,7 @@ struct CaptureFlowView: View {
                 if let model { content(model) } else { ProgressView() }
             }
             .background(Theme.background)
+            .overlay(alignment: .bottom) { if let uploadError { ErrorBanner(message: uploadError).padding() } }
             .navigationTitle("Capture Evidence").inlineNavigationTitle()
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { model?.cancel(); dismiss() } } }
         }
@@ -26,6 +30,37 @@ struct CaptureFlowView: View {
             await camera.prepare()
         }
         .onDisappear { camera.stop() }
+        .onChange(of: pickerItem) { _, item in
+            guard let item else { return }
+            Task { await importPhoto(item) }
+        }
+    }
+
+    /// Reads the picked library photo, prepares it and hands it to the review step.
+    private func importPhoto(_ item: PhotosPickerItem) async {
+        defer { pickerItem = nil }
+        guard let model else { return }
+        guard let data = try? await item.loadTransferable(type: Data.self), let photo = PhotoImport.prepare(data) else {
+            uploadError = "That file couldn't be read as a photo. Pick a JPEG, HEIC or PNG picture."
+            return
+        }
+        uploadError = nil
+        model.photoUploaded(photo)
+    }
+
+    private func uploadButton(compact: Bool) -> some View {
+        PhotosPicker(selection: $pickerItem, matching: .images) {
+            if compact {
+                Image(systemName: "photo.on.rectangle").font(.title2.weight(.semibold))
+                    .frame(width: Glove.target, height: Glove.target).background(.ultraThinMaterial, in: Circle())
+            } else {
+                Label("Upload a photo", systemImage: "photo.on.rectangle").font(.headline)
+                    .padding(.horizontal, 20).frame(minHeight: Glove.target).background(Theme.accent, in: Capsule()).foregroundStyle(Theme.onAccent)
+            }
+        }
+        .accessibilityIdentifier("capture.upload")
+        .accessibilityLabel("Upload a photo")
+        .accessibilityHint("Choose a picture from your library to check for helmets")
     }
 
     @ViewBuilder private func content(_ model: CaptureViewModel) -> some View {
@@ -51,7 +86,9 @@ struct CaptureFlowView: View {
                 }
                 .padding(.bottom, 28)
                 .accessibilityLabel("Take photo")
+                .accessibilityIdentifier("capture.shutter")
             }
+            .overlay(alignment: .bottomLeading) { uploadButton(compact: true).padding(.leading, 24).padding(.bottom, 44) }
             .overlay(alignment: .topTrailing) {
                 Button { showScanner = true } label: {
                     Label("Scan area code", systemImage: "qrcode.viewfinder").font(.headline)
@@ -64,9 +101,21 @@ struct CaptureFlowView: View {
             .overlay(alignment: .topLeading) { areaChip(model) }
             .sheet(isPresented: $showScanner) { scanner(model) }
         case .notDetermined: ProgressView()
-        case .denied: EmptyStateView(symbol: "camera.fill", title: "Camera access is off", message: "BuildSight needs the camera to record site evidence. Turn it on in Settings.", actionTitle: "Open Settings") { openSettings() }
-        case .restricted: EmptyStateView(symbol: "lock.fill", title: "Camera is restricted", message: "Screen Time or device management is blocking the camera.")
-        case .noCamera: EmptyStateView(symbol: "camera.metering.unknown", title: "No camera available", message: "This device has no camera (for example the Simulator). Evidence capture needs a real camera.")
+        case .denied:
+            VStack(spacing: 16) {
+                EmptyStateView(symbol: "camera.fill", title: "Camera access is off", message: "Turn the camera on in Settings, or upload a picture from your library instead.", actionTitle: "Open Settings") { openSettings() }
+                uploadButton(compact: false)
+            }
+        case .restricted:
+            VStack(spacing: 16) {
+                EmptyStateView(symbol: "lock.fill", title: "Camera is restricted", message: "Screen Time or device management is blocking the camera. You can still upload a picture.")
+                uploadButton(compact: false)
+            }
+        case .noCamera:
+            VStack(spacing: 16) {
+                EmptyStateView(symbol: "camera.metering.unknown", title: "No camera available", message: "This device has no camera (for example the Simulator). Upload a picture from your library to check it.")
+                uploadButton(compact: false)
+            }
         }
     }
 
@@ -160,6 +209,7 @@ private struct ReviewStep: View {
         case .servicesDisabled: "location services are off"
         case .noFixYet: "no signal yet"
         case .timedOut: "timed out"
+        case .imported: "this photo was uploaded, not taken here"
         }
     }
 }

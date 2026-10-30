@@ -11,13 +11,15 @@ struct SignInView: View {
     @State private var showErrors = false
     @FocusState private var focus: Field?
     private enum Field { case email, password }
-    private var biometric: (name: String, symbol: String)? { environment.biometricLogin.savedEmail == nil ? nil : BiometricLabel.current }
+    @State private var notice: String?
+    private var biometric: (name: String, symbol: String, enrolled: Bool)? { BiometricLabel.supported }
 
     private var emailError: String? {
-        let value = email.trimmingCharacters(in: .whitespaces)
-        if value.isEmpty { return "Enter your email address." }
-        if !value.contains("@") || !value.contains(".") { return "That doesn't look like an email address." }
-        return nil
+        switch FormRules.email(email) {
+        case .valid: nil
+        case .empty: "Enter your email address."
+        case .invalid: "That doesn't look like an email address."
+        }
     }
     private var passwordError: String? { password.isEmpty ? "Enter your password." : nil }
 
@@ -105,13 +107,19 @@ struct SignInView: View {
                 Button(action: signIn) { if busy { ProgressView() } else { Text("Sign In") } }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(busy || environment.config == nil)
-                if let biometric, let saved = environment.biometricLogin.savedEmail {
-                    Button { Task { await biometricSignIn(biometric.name) } } label: {
+                if let biometric {
+                    Button { Task { await biometricSignIn() } } label: {
                         Label("Sign in with \(biometric.name)", systemImage: biometric.symbol)
                     }
                     .buttonStyle(SecondaryButtonStyle()).disabled(busy || environment.config == nil)
-                    .accessibilityHint("Signs in as \(saved)")
-                    Text("Signing in as \(saved)").font(.footnote).foregroundStyle(Theme.secondaryText)
+                    .accessibilityIdentifier("signin.biometric")
+                    if let saved = environment.biometricLogin.savedEmail {
+                        Text("Signing in as \(saved)").font(.footnote).foregroundStyle(Theme.secondaryText)
+                    }
+                    if let notice {
+                        Label(notice, systemImage: "info.circle.fill").font(.footnote).foregroundStyle(Theme.secondaryText)
+                            .multilineTextAlignment(.leading).accessibilityIdentifier("signin.notice")
+                    }
                 }
                 Button("Forgot password?") { showReset = true }
                     .font(.body.weight(.semibold)).foregroundStyle(Theme.accentText).frame(minHeight: Glove.target)
@@ -145,9 +153,23 @@ struct SignInView: View {
     }
 
     /// Reads the saved login (this shows the Face ID / Touch ID prompt) and signs in with it.
-    private func biometricSignIn(_ name: String) async {
-        guard !busy else { return }
-        error = nil
+    private func biometricSignIn() async {
+        guard !busy, let info = biometric else { return }
+        let name = info.name
+        error = nil; notice = nil
+        guard info.enrolled else {
+            notice = "\(name) isn't set up on this device yet. Set it up in Settings. In the Simulator choose Features > Face ID > Enrolled."
+            return
+        }
+        guard environment.biometricLogin.savedEmail != nil else {
+            // Nothing saved yet: prove the sensor works, then explain how to turn it on for sign-in.
+            switch await BiometricService().authenticate(reason: "Try \(name) with BuildSight") {
+            case .success: notice = "\(name) works. Sign in with your password once and tap Turn On, then this button signs you in."
+            case .cancelled: break
+            default: error = "\(name) didn't recognise you. Try again, or sign in with your password."
+            }
+            return
+        }
         switch await environment.biometricLogin.load(reason: "Sign in to BuildSight") {
         case .success(let saved):
             busy = true
@@ -171,10 +193,11 @@ struct PasswordResetView: View {
     @State private var busy = false
     @State private var tried = false
     private var resetEmailError: String? {
-        let value = initialEmail.trimmingCharacters(in: .whitespaces)
-        if value.isEmpty { return "Enter the email address of your account." }
-        if !value.contains("@") || !value.contains(".") { return "That doesn't look like an email address." }
-        return nil
+        switch FormRules.email(initialEmail) {
+        case .valid: nil
+        case .empty: "Enter the email address of your account."
+        case .invalid: "That doesn't look like an email address."
+        }
     }
 
     var body: some View {

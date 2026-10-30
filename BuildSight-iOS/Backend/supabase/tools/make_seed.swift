@@ -18,7 +18,7 @@ import BuildSightKit
 struct MakeSeed {
     static func main() throws {
         var args = Array(CommandLine.arguments.dropFirst())
-        var project = "Demo Site", location = "Site office", org = "Demo Organisation", managerName: String?
+        var project = "Main Site", location = "Site office", org = "BuildSight", managerName: String?
         var users: [(UUID, Role, String)] = []
         func value(_ flag: String) -> String? {
             guard let i = args.firstIndex(of: flag), i + 1 < args.count else { return nil }

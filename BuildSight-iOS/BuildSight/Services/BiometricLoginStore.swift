@@ -5,14 +5,27 @@ import BuildSightKit
 
 /// Face ID / Touch ID naming shared by the login, lock and Settings screens.
 enum BiometricLabel {
-    static var current: (name: String, symbol: String)? {
-        guard case .available(let kind) = BiometricService().availability() else { return nil }
-        switch kind {
-        case .faceID: return ("Face ID", "faceid")
-        case .touchID: return ("Touch ID", "touchid")
-        case .opticID: return ("Optic ID", "opticid")
-        case .none: return nil
+    /// For the login screen: the sensor this device has, even when nothing is enrolled yet, so the
+    /// button can show and explain how to set it up. Nil only when there is no biometric hardware.
+    static var supported: (name: String, symbol: String, enrolled: Bool)? {
+        let context = LAContext()
+        var error: NSError?
+        let enrolled = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        var kind: BiometricKind
+        switch context.biometryType {
+        case .faceID: kind = .faceID
+        case .touchID: kind = .touchID
+        case .opticID: kind = .opticID
+        default: kind = .none
         }
+        if kind == .none, (error as? LAError)?.code == .biometryNotEnrolled { kind = .faceID }
+        guard let name = kind.displayName, let symbol = kind.symbolName else { return nil }
+        return (name, symbol, enrolled)
+    }
+
+    static var current: (name: String, symbol: String)? {
+        guard case .available(let kind) = BiometricService().availability(), let name = kind.displayName, let symbol = kind.symbolName else { return nil }
+        return (name, symbol)
     }
 }
 

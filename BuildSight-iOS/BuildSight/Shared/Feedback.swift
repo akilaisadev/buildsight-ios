@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import BuildSightKit
 
 /// App-wide confirmation and error banner, shown at the top of the screen for a few seconds.
 /// Use it after an action finishes ("Task created") or when a form can't be submitted.
@@ -75,5 +76,5 @@ struct FieldError: View {
 
 extension String {
     /// True when the text is empty or only spaces and line breaks.
-    var isBlank: Bool { trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    var isBlank: Bool { FormRules.isBlank(self) }
 }

@@ -100,6 +100,7 @@
 		7D7A3B02F3B6E82F5DC311C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7F97851BDA4D328547CEEA01 /* make_seed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = make_seed.swift; sourceTree = "<group>"; };
 		83BF71FC7734CCD3F51CC653 /* CHECKLIST.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHECKLIST.md; sourceTree = "<group>"; };
+		845D1500A425E526519E58CF /* rename_site.sql */ = {isa = PBXFileReference; path = rename_site.sql; sourceTree = "<group>"; };
 		864771CB4F09CD3C1ED4D715 /* IssueViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssueViews.swift; sourceTree = "<group>"; };
 		867CF4059891B0FA9D8A55BA /* convert_helmet_model.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = convert_helmet_model.py; sourceTree = "<group>"; };
 		86F6EFA459FD48D23556E275 /* BuildSightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildSightApp.swift; sourceTree = "<group>"; };
@@ -241,6 +242,7 @@
 		486A15D8FB985BB73B558C16 /* supabase */ = {
 			isa = PBXGroup;
 			children = (
+				845D1500A425E526519E58CF /* rename_site.sql */,
 				E3B34019B861193225820F06 /* schema.sql */,
 				39A2BC68D7036521E7CCD4BA /* test_schema.sh */,
 				374477BFD83A40094B9CEF92 /* tools */,

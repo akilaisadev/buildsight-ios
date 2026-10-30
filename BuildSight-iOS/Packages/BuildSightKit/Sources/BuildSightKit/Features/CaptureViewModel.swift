@@ -27,6 +27,8 @@ public final class CaptureViewModel {
     public private(set) var outcome: CaptureOutcome?
     public private(set) var locationPreview: LocationFix?
     public var selectedAreaID: UUID?
+    /// True when the photo in review came from the library instead of the camera.
+    public private(set) var isUpload = false
     public var category: PhotoCategory = .progress
     public var note = ""
     public let areas: [SiteArea]
@@ -38,7 +40,7 @@ public final class CaptureViewModel {
     private let workflow: HelmetWorkflow
     private let sync: SyncTriggering
     private let clock: @Sendable () -> Date
-    private var capturedAt: Date?
+    public private(set) var capturedAt: Date?
     private var locationTask: Task<LocationFix, Never>?
 
     public init(actor: ActingUser, areas: [SiteArea], defaultAreaID: UUID? = nil, store: LocalStore, files: EvidenceFileStoring, location: LocationProviding, workflow: HelmetWorkflow, sync: SyncTriggering = NoopSyncTrigger(), clock: @escaping @Sendable () -> Date = { Date() }) {
@@ -59,6 +61,7 @@ public final class CaptureViewModel {
     /// capture, not when the user finally presses Save.
     public func photoCaptured(_ jpeg: Data) {
         capturedJPEG = jpeg
+        isUpload = false
         capturedAt = clock()
         locationPreview = nil
         let provider = location
@@ -70,9 +73,23 @@ public final class CaptureViewModel {
         }
     }
 
+    /// Called with a photo the user picked from their library. Unlike a camera photo, the time is the
+    /// picture's own date when it has one, and no position is recorded: the phone's current GPS
+    /// says nothing about where an older picture was taken.
+    public func photoUploaded(_ photo: ImportedPhoto) {
+        capturedJPEG = photo.jpeg
+        capturedAt = photo.takenAt ?? clock()
+        let fix = LocationFix.unavailable(.imported)
+        locationPreview = fix
+        locationTask = Task { fix }
+        isUpload = true
+        phase = .review
+    }
+
     public func retake() {
         locationTask?.cancel()
         capturedJPEG = nil
+        isUpload = false
         locationPreview = nil
         phase = .camera
     }

@@ -28,6 +28,8 @@ public enum LocationUnavailableReason: String, Codable, Sendable {
     case servicesDisabled
     case noFixYet
     case timedOut
+    /// The photo was uploaded from the library, so the phone's current position is not where it was taken.
+    case imported
 }
 
 /// A GPS reading, or an explicit statement that we do not have one. We never
