@@ -132,3 +132,27 @@ struct SkeletonList: View {
         .accessibilityHidden(true)
     }
 }
+
+/// On regular-width screens (iPad) centre content in a readable column instead of
+/// stretching it edge to edge: about 760 pt wide with extra side margin, so long lines
+/// of text stay comfortable and cards don't run to the screen edges. Phones and
+/// compact widths (Split View, Slide Over) are untouched.
+struct ReadableColumn: ViewModifier {
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    static let maxWidth: CGFloat = 760
+
+    func body(content: Content) -> some View {
+        if sizeClass == .regular {
+            content
+                .frame(maxWidth: Self.maxWidth)
+                .frame(maxWidth: .infinity)
+                .background(Theme.background)
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func readableColumn() -> some View { modifier(ReadableColumn()) }
+}

@@ -206,16 +206,16 @@ struct PadShell: View {
 
     @ViewBuilder private var detail: some View {
         switch router.sidebar ?? .dashboard {
-        case .dashboard: HomeView()
-        case .activity: ActivityView()
+        case .dashboard: HomeView().readableColumn()
+        case .activity: ActivityView().readableColumn()
         case .map: SiteMapView()
         case .issues: IssueReviewSplit(filter: IssueFilter())
         case .helmetFlags: IssueReviewSplit(filter: IssueFilter(machineGeneratedOnly: true))
-        case .tasks: TaskListView(initialBucket: .today)
-        case .inspections: InspectionListView()
-        case .notifications: NotificationsView()
-        case .sync: SyncCenterView()
-        case .settings: SettingsView()
+        case .tasks: TaskListView(initialBucket: .today).readableColumn()
+        case .inspections: InspectionListView().readableColumn()
+        case .notifications: NotificationsView().readableColumn()
+        case .sync: SyncCenterView().readableColumn()
+        case .settings: SettingsView().readableColumn()
         }
     }
 }
@@ -223,6 +223,10 @@ struct PadShell: View {
 struct RouteDestination: View {
     let route: Route
     var body: some View {
+        destination.readableColumn()
+    }
+
+    @ViewBuilder private var destination: some View {
         switch route {
         case .issue(let id): IssueDetailView(issueID: id)
         case .task(let id): TaskDetailView(taskID: id)
