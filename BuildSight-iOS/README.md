@@ -42,6 +42,17 @@ View (SwiftUI)  →  ViewModel (@Observable, @MainActor)  →  Repository / Work
 6. **"Missing package product BuildSightKit" or other odd Xcode errors after a pull:** quit Xcode and run `./scripts/reset_xcode.sh`, then open the project again.
 7. Backend setup from scratch: [docs/BACKEND_SETUP.md](docs/BACKEND_SETUP.md). Tests: `cd Packages/BuildSightKit && swift test`.
 
+## Backend access for markers
+
+The app talks to a hosted Supabase project, so nothing has to be installed or created to run it.
+
+- **Backend URL and key:** committed in `Config/Backend.xcconfig` (the project URL and the *publishable* key, which is designed to ship inside an app). A fresh clone connects with no extra file. No secret key is in this repository.
+- **Test account:** sign in with `test@gmail.com` / `test@123`. It belongs to the demo project, so photos, issues, inspections and tasks can be created and will sync.
+- **Sign-ups are off.** Only accounts the owner adds can sign in, so a marker should use the test account above.
+- **How data reaches the backend:** every change is saved on the device first (Core Data) and put in a sync queue. When the phone is online, the queue is sent to the server through one function, `upsert_record()`. It checks the user's role and project membership, ignores repeats, and rejects stale versions so the app can merge them. Photos go to a private `evidence` storage bucket. The **Sync** screen shows what is waiting, and a discarded change is undone locally and never sent.
+- **Row-level security:** the app cannot write the tables directly. The rules are in `Backend/supabase/schema.sql` and are tested by `Backend/supabase/test_schema.sh`.
+- **Checking it yourself:** sign in, capture a photo, then open the Site Log. Turn on airplane mode, add another item, then turn it off and watch the Sync screen send it.
+
 ## Helmet model
 
 `ML/models/` holds a Core ML conversion of `keremberke/yolov8n-hard-hat-detection` (classes `Hardhat`, `NO-Hardhat`). **Its licence is unresolved** (it is included for coursework only; do not publish or redistribute it) (see [docs/HELMET_MODEL_FEASIBILITY.md](docs/HELMET_MODEL_FEASIBILITY.md)). **Accuracy has not been measured**: no evaluation images have been run. Without the model the app builds and reports "no helmet model installed".
