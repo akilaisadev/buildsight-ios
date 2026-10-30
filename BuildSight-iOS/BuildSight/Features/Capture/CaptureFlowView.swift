@@ -111,6 +111,7 @@ private struct ReviewStep: View {
     @Binding var showScanner: Bool
     let scanMessage: String?
     @EnvironmentObject private var context: ScreenContext
+    @State private var showAreaError = false
 
     var body: some View {
         Form {
@@ -122,6 +123,7 @@ private struct ReviewStep: View {
                     Text("Choose area").tag(UUID?.none)
                     ForEach(model.areas) { Text($0.displayName).tag(Optional($0.id)) }
                 }
+                if showAreaError, model.selectedAreaID == nil { FieldError(message: "Choose the site area, or scan its QR code, before saving.") }
                 Button { showScanner = true } label: { Label("Scan area QR code", systemImage: "qrcode.viewfinder") }
                 if let scanMessage { Text(scanMessage).font(.footnote).foregroundStyle(Theme.secondaryText) }
                 locationRow
@@ -131,8 +133,11 @@ private struct ReviewStep: View {
                 TextField("Note (optional)", text: $model.note, axis: .vertical).lineLimit(1...4)
             }
             Section {
-                Button { Task { await model.saveAndAnalyse() } } label: { if model.phase == .saving { ProgressView() } else { Text("Save & Check Helmets") } }
-                    .buttonStyle(PrimaryButtonStyle()).disabled(!model.canSave).listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
+                Button {
+                    guard model.canSave else { showAreaError = true; UINotificationFeedbackGenerator().notificationOccurred(.error); return }
+                    Task { await model.saveAndAnalyse() }
+                } label: { if model.phase == .saving { ProgressView() } else { Text("Save & Check Helmets") } }
+                    .buttonStyle(PrimaryButtonStyle()).disabled(model.phase == .saving).listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
                 Button("Retake") { model.retake() }.buttonStyle(SecondaryButtonStyle()).listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
             } footer: { Text("Time, location and your name are recorded automatically. Helmet analysis runs on this device; the photo is saved first.") }
         }

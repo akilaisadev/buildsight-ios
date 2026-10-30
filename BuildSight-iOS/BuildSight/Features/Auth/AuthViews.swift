@@ -8,8 +8,17 @@ struct SignInView: View {
     @State private var busy = false
     @State private var error: String?
     @State private var showReset = false
+    @State private var showErrors = false
     @FocusState private var focus: Field?
     private enum Field { case email, password }
+
+    private var emailError: String? {
+        let value = email.trimmingCharacters(in: .whitespaces)
+        if value.isEmpty { return "Enter your email address." }
+        if !value.contains("@") || !value.contains(".") { return "That doesn't look like an email address." }
+        return nil
+    }
+    private var passwordError: String? { password.isEmpty ? "Enter your password." : nil }
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var wide: Bool { sizeClass == .regular }
@@ -79,10 +88,12 @@ struct SignInView: View {
                 TextField("Email", text: $email).emailField().focused($focus, equals: .email)
                     .padding(.horizontal, 16).frame(minHeight: fieldHeight).submitLabel(.next)
                     .onSubmit { focus = .password }
+                if showErrors, let e = emailError { fieldError(e) }
                 Divider().padding(.leading, 16)
                 SecureField("Password", text: $password).textContentType(.password).focused($focus, equals: .password)
                     .padding(.horizontal, 16).frame(minHeight: fieldHeight).submitLabel(.go)
                     .onSubmit(signIn)
+                if showErrors, let e = passwordError { fieldError(e) }
             }
             .font(wide ? .title3 : .body)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
@@ -92,7 +103,7 @@ struct SignInView: View {
             VStack(spacing: 8) {
                 Button(action: signIn) { if busy { ProgressView() } else { Text("Sign In") } }
                     .buttonStyle(PrimaryButtonStyle())
-                    .disabled(busy || email.isEmpty || password.isEmpty || environment.config == nil)
+                    .disabled(busy || environment.config == nil)
                 Button("Forgot password?") { showReset = true }
                     .font(.body.weight(.semibold)).foregroundStyle(Theme.accentText).frame(minHeight: Glove.target)
             }
@@ -101,8 +112,16 @@ struct SignInView: View {
 
     private var fieldHeight: CGFloat { wide ? 68 : 52 }
 
+    private func fieldError(_ message: String) -> some View {
+        FieldError(message: message)
+            .padding(.horizontal, 16).padding(.bottom, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private func signIn() {
         guard !busy else { return }
+        showErrors = true
+        guard emailError == nil, passwordError == nil else { error = nil; return }
         busy = true; error = nil
         Task {
             defer { busy = false }
@@ -120,12 +139,20 @@ struct PasswordResetView: View {
     @State private var sent = false
     @State private var error: String?
     @State private var busy = false
+    @State private var tried = false
+    private var resetEmailError: String? {
+        let value = initialEmail.trimmingCharacters(in: .whitespaces)
+        if value.isEmpty { return "Enter the email address of your account." }
+        if !value.contains("@") || !value.contains(".") { return "That doesn't look like an email address." }
+        return nil
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
                     TextField("Email", text: $initialEmail).emailField()
+                    if tried, let e = resetEmailError { FieldError(message: e) }
                 } footer: { Text("If an account exists for this address, a reset link will be sent. The link is emailed by the BuildSight backend.") }
                 if sent { Section { Label("Check your inbox for the reset link.", systemImage: "envelope.badge.fill") } }
                 if let error { Section { ErrorBanner(message: error) } }
@@ -135,6 +162,8 @@ struct PasswordResetView: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Send") {
+                        tried = true
+                        guard resetEmailError == nil else { return }
                         busy = true
                         Task {
                             defer { busy = false }
@@ -142,7 +171,7 @@ struct PasswordResetView: View {
                             catch let e as AuthError { error = e.userMessage }
                             catch { self.error = error.localizedDescription }
                         }
-                    }.disabled(initialEmail.isEmpty || busy)
+                    }.disabled(busy)
                 }
             }
         }

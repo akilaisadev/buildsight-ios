@@ -263,13 +263,25 @@ struct ReasonSheet: View {
     let onSubmit: (String) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var reason = ""
+    @State private var tried = false
+    @EnvironmentObject private var toaster: Toaster
     var body: some View {
         NavigationStack {
-            Form { Section("Reason (recorded in the history)") { TextField("Why?", text: $reason, axis: .vertical).lineLimit(2...5) } }
+            Form {
+                Section("Reason (recorded in the history)") {
+                    TextField("Why? (required)", text: $reason, axis: .vertical).lineLimit(2...5)
+                    if tried, reason.isBlank { FieldError(message: "Enter a reason.") }
+                }
+            }
+                .toastHost(toaster)
                 .navigationTitle(title).inlineNavigationTitle()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                    ToolbarItem(placement: .confirmationAction) { Button("Confirm") { onSubmit(reason); dismiss() }.disabled(reason.trimmingCharacters(in: .whitespaces).isEmpty) }
+                    ToolbarItem(placement: .confirmationAction) { Button("Confirm") {
+                        tried = true
+                        guard !reason.isBlank else { toaster.error("Enter a reason."); return }
+                        onSubmit(reason); dismiss(); toaster.success("Saved")
+                    } }
                 }
         }
         .presentationDetents([.medium])
@@ -304,6 +316,8 @@ struct HelmetReviewSheet: View {
     @State private var mode = 0
     @State private var count = 1
     @State private var note = ""
+    @State private var tried = false
+    @EnvironmentObject private var toaster: Toaster
 
     var body: some View {
         NavigationStack {
@@ -314,18 +328,24 @@ struct HelmetReviewSheet: View {
                 case 1:
                     Section("Workers actually without a helmet") { Stepper("\(count)", value: $count, in: 1...20) }
                     Section("Note") { TextField("What did you see?", text: $note, axis: .vertical) }
-                default: Section("Why is this a false alarm?") { TextField("Reason (required)", text: $note, axis: .vertical).lineLimit(2...5) }
+                default:
+                    Section("Why is this a false alarm?") {
+                        TextField("Reason (required)", text: $note, axis: .vertical).lineLimit(2...5)
+                        if tried, note.isBlank { FieldError(message: "Say why this is a false alarm.") }
+                    }
                 }
                 if let message = model.errorMessage { ErrorBanner(message: message) }
             }
             .navigationTitle("Review Helmet Flag").inlineNavigationTitle()
+            .toastHost(toaster)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        if mode == 2, note.isBlank { tried = true; toaster.error("Say why this is a false alarm."); return }
                         let decision: HelmetReviewDecision = mode == 0 ? .confirm : mode == 1 ? .correct(confirmedCount: count, note: note) : .dismiss(reason: note)
-                        Task { if await model.review(decision, analysisID: analysis.id) { dismiss() } }
-                    }.disabled(mode == 2 && note.trimmingCharacters(in: .whitespaces).isEmpty)
+                        Task { if await model.review(decision, analysisID: analysis.id) { dismiss(); toaster.success("Review saved") } }
+                    }
                 }
             }
         }
@@ -337,6 +357,8 @@ struct ReportIssueView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var model: ReportIssueViewModel?
     @State private var drafts: [IssueDraft] = []
+    @State private var showErrors = false
+    @EnvironmentObject private var toaster: Toaster
 
     var body: some View {
         NavigationStack {
@@ -344,9 +366,17 @@ struct ReportIssueView: View {
                 if let model { form(model) } else { ProgressView() }
             }
             .navigationTitle("Report Issue").inlineNavigationTitle()
+            .toastHost(toaster)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Save Draft") { Task { await model?.saveDraft(); dismiss() } } }
-                ToolbarItem(placement: .confirmationAction) { Button("Submit") { Task { if await model?.submit() == true { dismiss() } } }.disabled(!(model?.canSubmit ?? false)) }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Submit") {
+                        showErrors = true
+                        guard let model else { return }
+                        guard model.canSubmit else { toaster.error("Add a title and choose a site area."); return }
+                        Task { if await model.submit() { dismiss(); toaster.success("Issue reported") } else { toaster.error(model.errorMessage ?? "Couldn't save the issue.") } }
+                    }
+                }
             }
         }
         .task {
@@ -359,7 +389,8 @@ struct ReportIssueView: View {
         @Bindable var model = model
         return Form {
             Section("What happened") {
-                TextField("Title", text: $model.draft.title)
+                TextField("Title (required)", text: $model.draft.title)
+                if showErrors, model.draft.title.isBlank { FieldError(message: "Enter a title for the issue.") }
                 TextField("Description", text: $model.draft.details, axis: .vertical).lineLimit(3...8)
             }
             Section("Classification") {
@@ -371,6 +402,7 @@ struct ReportIssueView: View {
                     Text("Choose area").tag(UUID?.none)
                     ForEach(context.data.snapshot?.areas ?? []) { Text($0.displayName).tag(Optional($0.id)) }
                 }
+                if showErrors, model.draft.areaID == nil { FieldError(message: "Choose the site area where this happened.") }
                 Picker("Assignee", selection: $model.draft.assigneeID) {
                     Text("Unassigned").tag(UUID?.none)
                     ForEach(context.data.snapshot?.members ?? []) { Text($0.displayName).tag(Optional($0.userID)) }

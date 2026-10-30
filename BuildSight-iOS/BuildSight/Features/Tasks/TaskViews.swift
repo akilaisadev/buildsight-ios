@@ -103,11 +103,18 @@ struct CreateTaskView: View {
     @State private var priority: Priority = .medium
     @State private var due = Calendar.current.date(bySettingHour: 17, minute: 0, second: 0, of: Date()) ?? Date()
     @State private var issueID: UUID?
+    @State private var showErrors = false
+    @EnvironmentObject private var toaster: Toaster
+    private var titleError: String? { title.isBlank ? "Enter a title for the task." : nil }
 
     var body: some View {
         NavigationStack {
             Form {
-                Section { TextField("Title", text: $title); TextField("Details", text: $details, axis: .vertical).lineLimit(2...5) }
+                Section {
+                    TextField("Title (required)", text: $title)
+                    if showErrors, let e = titleError { FieldError(message: e) }
+                    TextField("Details", text: $details, axis: .vertical).lineLimit(2...5)
+                }
                 Section("Assignment") {
                     Picker("Assignee", selection: $assigneeID) { Text("Choose").tag(UUID?.none); ForEach(context.data.snapshot?.members ?? []) { Text($0.displayName).tag(Optional($0.userID)) } }
                     Picker("Area", selection: $areaID) { Text("None").tag(UUID?.none); ForEach(context.data.snapshot?.areas ?? []) { Text($0.displayName).tag(Optional($0.id)) } }
@@ -120,10 +127,15 @@ struct CreateTaskView: View {
                 if let m = model.errorMessage { Section { ErrorBanner(message: m) } }
             }
             .navigationTitle("New Task").inlineNavigationTitle()
+            .toastHost(toaster)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Create") { Task { if await model.create(title: title, details: details, areaID: areaID, assigneeID: assigneeID ?? context.actor.userID, priority: priority, dueDate: due, relatedIssueID: issueID) { dismiss() } } }.disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Button("Create") {
+                        showErrors = true
+                        guard titleError == nil else { toaster.error("Fill in the required fields."); return }
+                        Task { if await model.create(title: title, details: details, areaID: areaID, assigneeID: assigneeID ?? context.actor.userID, priority: priority, dueDate: due, relatedIssueID: issueID) { dismiss(); toaster.success("Task created") } else { toaster.error(model.errorMessage ?? "Couldn't create the task.") } }
+                    }
                 }
             }
         }

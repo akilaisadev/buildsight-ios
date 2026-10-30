@@ -34,6 +34,7 @@
 		91A3340BE7C96E48261CC522 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */; };
 		A41F2FE2919EE63EC36C3529 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */; };
 		A5AC66025C43C1EDBC4BB81A /* GloveChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A0AB8784CE1B57365E84A /* GloveChoice.swift */; };
+		A7019D0B752C2A780A1B04F3 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB310DBFAF7554EC2354E436 /* Feedback.swift */; };
 		B268AD9C0C374E1D4F634EBF /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F59CEAEEDE75E4A6F9FBAF /* SyncCoordinator.swift */; };
 		B8ACEAF75C331128BEC3308D /* GeofenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2072E71FA6952C882AE9DAD /* GeofenceService.swift */; };
 		BF7135E430CDFC34AB63CFDD /* QRCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36296FB7776249BFE87ED0A /* QRCode.swift */; };
@@ -119,6 +120,7 @@
 		C413A9146567DB841F17D042 /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App.xcconfig; sourceTree = "<group>"; };
 		C91C993FFA399D46E7B88A46 /* provenance.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = provenance.json; sourceTree = "<group>"; };
 		C987AB285A94B05BB4182460 /* AuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViews.swift; sourceTree = "<group>"; };
+		CB310DBFAF7554EC2354E436 /* Feedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
 		CDB4D4C47AAB7778D9FD196B /* BiometricService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricService.swift; sourceTree = "<group>"; };
 		D2072E71FA6952C882AE9DAD /* GeofenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofenceService.swift; sourceTree = "<group>"; };
 		D36296FB7776249BFE87ED0A /* QRCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCode.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 			children = (
 				285F86754FD0E61D6D48671B /* Components.swift */,
 				21505ED2368AF349F12F7249 /* EvidenceImage.swift */,
+				CB310DBFAF7554EC2354E436 /* Feedback.swift */,
 				096A0AB8784CE1B57365E84A /* GloveChoice.swift */,
 				D9A0B7EE8378559AD8A74600 /* LaunchAnimation.swift */,
 				0CB08834FBC6D2DF2E2A5B30 /* PhonePreview.swift */,
@@ -558,7 +561,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n# Xcode build phase: compile ML/models/*.mlpackage into the app bundle when they exist.\n# The model weights are git-ignored (licence), so a fresh clone has none; the app still\n# builds and reports \"no helmet model installed\". Drop PPEDetector.mlpackage (and optionally\n# HelmetDetector.mlpackage) into ML/models/ and build again to include them.\nset -e\nDEST=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nFOUND=0\nfor NAME in PPEDetector HelmetDetector; do\n  SRC=\"$SRCROOT/ML/models/$NAME.mlpackage\"\n  rm -rf \"$DEST/$NAME.mlmodelc\"\n  if [ -d \"$SRC\" ]; then\n    xcrun coremlcompiler compile \"$SRC\" \"$DEST\"\n    FOUND=$((FOUND + 1))\n  fi\ndone\nif [ \"$FOUND\" -eq 0 ]; then\n  echo \"note: no Core ML model in ML/models, building without a helmet model\"\nelse\n  echo \"Bundled $FOUND Core ML model(s)\"\nfi\n";
+			shellScript = "#!/bin/sh\n# Xcode build phase: compile ML/models/*.mlpackage into the app bundle when they exist.\n# The model weights are git-ignored (licence), so a fresh clone has none; the app still\n# builds and reports \"no helmet model installed\". Drop PPEDetector.mlpackage (and optionally\n# HelmetDetector.mlpackage) into ML/models/ and build again to include them.\nset -e\nDEST=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nFOUND=0\nfor NAME in PPEDetector HelmetDetector; do\n  SRC=\"$SRCROOT/ML/models/$NAME.mlpackage\"\n  rm -rf \"$DEST/$NAME.mlmodelc\"\n  if [ -d \"$SRC\" ]; then\n    xcrun coremlcompiler compile \"$SRC\" \"$DEST\"\n    FOUND=$((FOUND + 1))\n  fi\ndone\nif [ \"$FOUND\" -eq 0 ]; then\n  echo \"warning: No Core ML model found in ML/models (PPEDetector.mlpackage). This build will say \\\"No helmet model is installed\\\". Copy the .mlpackage files into BuildSight-iOS/ML/models and build again.\"\nelse\n  echo \"Bundled $FOUND Core ML model(s)\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -586,6 +589,7 @@
 				0C9BA79E1BA6E16917DD8BD9 /* Components.swift in Sources */,
 				F2DCBA01E7C0498BD3B2DAF3 /* ConnectivityMonitor.swift in Sources */,
 				01E8B9D70B666D1F9AB34204 /* EvidenceImage.swift in Sources */,
+				A7019D0B752C2A780A1B04F3 /* Feedback.swift in Sources */,
 				B8ACEAF75C331128BEC3308D /* GeofenceService.swift in Sources */,
 				A5AC66025C43C1EDBC4BB81A /* GloveChoice.swift in Sources */,
 				D790E9B2087670561C3ECCE8 /* HomeView.swift in Sources */,

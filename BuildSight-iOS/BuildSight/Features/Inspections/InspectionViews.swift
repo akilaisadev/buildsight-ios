@@ -41,6 +41,8 @@ struct InspectionListView: View {
 struct StartInspectionView: View {
     @EnvironmentObject private var context: ScreenContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var toaster: Toaster
+    @State private var showAreaError = false
     @State private var template = InspectionRules.builtInTemplates[0]
     @State private var areaID: UUID?
     @State private var error: String?
@@ -50,21 +52,23 @@ struct StartInspectionView: View {
             Form {
                 Picker("Checklist", selection: $template) { ForEach(InspectionRules.builtInTemplates) { Text($0.name).tag($0) } }
                 Picker("Area", selection: $areaID) { Text("Choose area").tag(UUID?.none); ForEach(context.data.snapshot?.areas ?? []) { Text($0.displayName).tag(Optional($0.id)) } }
+                if showAreaError, areaID == nil { FieldError(message: "Choose the area you are inspecting.") }
                 Section("Items") { ForEach(template.itemTitles, id: \.self) { Text($0) } }
                 if let error { ErrorBanner(message: error) }
             }
             .navigationTitle("Start Inspection").inlineNavigationTitle()
+            .toastHost(toaster)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Start") {
-                        guard let areaID else { return }
+                        guard let areaID else { showAreaError = true; toaster.error("Choose the area first."); return }
                         Task {
                             let fix = await context.workspace.location.currentFix(timeout: 4)
-                            do { _ = try await InspectionRepository(store: context.store).start(template: template, areaID: areaID, actor: context.actor, location: fix, now: Date()); await context.sync.requestSync(); dismiss() }
-                            catch { self.error = "Couldn't start the inspection." }
+                            do { _ = try await InspectionRepository(store: context.store).start(template: template, areaID: areaID, actor: context.actor, location: fix, now: Date()); await context.sync.requestSync(); dismiss(); toaster.success("Inspection started") }
+                            catch { self.error = "Couldn't start the inspection."; toaster.error("Couldn't start the inspection.") }
                         }
-                    }.disabled(areaID == nil)
+                    }
                 }
             }
         }
@@ -77,6 +81,8 @@ struct InspectionRunView: View {
     @State private var model: InspectionRunViewModel?
     @State private var showStop = false
     @State private var stopReason = ""
+    @State private var stopTried = false
+    @EnvironmentObject private var toaster: Toaster
 
     var body: some View {
         Group {
@@ -118,11 +124,21 @@ struct InspectionRunView: View {
                 }
                 .sheet(isPresented: $showStop) {
                     NavigationStack {
-                        Form { Section("Why is work being stopped?") { TextField("Reason (required)", text: $stopReason, axis: .vertical).lineLimit(2...5) } }
+                        Form {
+                            Section("Why is work being stopped?") {
+                                TextField("Reason (required)", text: $stopReason, axis: .vertical).lineLimit(2...5)
+                                if stopTried, stopReason.isBlank { FieldError(message: "Enter why work is being stopped.") }
+                            }
+                        }
+                            .toastHost(toaster)
                             .navigationTitle("Emergency Stop").inlineNavigationTitle()
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { showStop = false } }
-                                ToolbarItem(placement: .confirmationAction) { Button("Raise") { Task { if await model.raiseEmergencyStop(reason: stopReason) { showStop = false } } }.disabled(stopReason.trimmingCharacters(in: .whitespaces).isEmpty) }
+                                ToolbarItem(placement: .confirmationAction) { Button("Raise") {
+                                    stopTried = true
+                                    guard !stopReason.isBlank else { toaster.error("Enter why work is being stopped."); return }
+                                    Task { if await model.raiseEmergencyStop(reason: stopReason) { showStop = false; toaster.success("Emergency stop raised") } }
+                                } }
                             }
                     }
                 }

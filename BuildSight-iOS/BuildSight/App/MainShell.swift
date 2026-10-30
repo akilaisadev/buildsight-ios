@@ -23,6 +23,7 @@ struct MainShell: View {
     @StateObject private var context: ScreenContext
     @EnvironmentObject private var router: AppRouter
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @StateObject private var toaster = Toaster()
 
     init(workspace: Workspace, actor: ActingUser) {
         _context = StateObject(wrappedValue: ScreenContext(workspace: workspace, actor: actor))
@@ -33,6 +34,8 @@ struct MainShell: View {
             if sizeClass == .regular { PadShell() } else { PhoneShell() }
         }
         .environmentObject(context)
+        .environmentObject(toaster)
+        .toastHost(toaster)
         // Glove-sized rows in every list (system default is 44 pt).
         .environment(\.defaultMinListRowHeight, Glove.target)
         .task { await context.data.observe() }
