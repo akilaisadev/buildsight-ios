@@ -44,6 +44,7 @@ struct NotificationsView: View {
 struct SyncCenterView: View {
     @EnvironmentObject private var context: ScreenContext
     @State private var model: SyncCenterViewModel?
+    @State private var undoRow: SyncRow?
 
     var body: some View {
         List {
@@ -65,13 +66,19 @@ struct SyncCenterView: View {
                         .accessibilityElement(children: .combine)
                         .swipeActions {
                             if case .failed = row.phase { Button("Retry") { Task { await model.retry(row.id) } }.tint(Theme.accentText) }
-                            Button("Stop Syncing", role: .destructive) { Task { await model.discard(row.id) } }
+                            Button("Undo Change", role: .destructive) { undoRow = row }
                         }
                     }
                 }
             }
         }
         .navigationTitle("Sync Center")
+        .confirmationDialog("Undo this change?", isPresented: Binding(get: { undoRow != nil }, set: { if !$0 { undoRow = nil } }), titleVisibility: .visible, presenting: undoRow) { row in
+            Button("Undo Change", role: .destructive) { Task { await model?.discard(row.id) } }
+            Button("Keep It", role: .cancel) {}
+        } message: { row in
+            Text("\"\(row.title)\" hasn't reached the server. Undoing removes it from this device, or puts the record back as the server has it. This can't be recovered.")
+        }
         .task { if model == nil { model = SyncCenterViewModel(store: context.store, engine: context.sync.engine) }; await model?.observe() }
     }
 

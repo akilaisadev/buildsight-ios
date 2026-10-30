@@ -327,9 +327,23 @@ public final class CoreDataLocalStore: LocalStore, @unchecked Sendable {
         broadcaster.send()
     }
 
+    /// Throws away a queued change AND undoes it locally, so no record is left marked "pending" with
+    /// nothing left to send. An edit goes back to what the server last confirmed (the base snapshot);
+    /// a new record the server never saw is removed.
     public func discardOperation(_ operationID: UUID) async throws {
         try await perform { context in
-            if let object = try self.operationObject(id: operationID, in: context) { context.delete(object) }
+            guard let object = try self.operationObject(id: operationID, in: context) else { return }
+            let operation = try? self.decodeOperation(object)
+            context.delete(object)
+            if let operation, let record = try self.recordObject(type: operation.recordType, id: operation.recordID, in: context) {
+                if let base = operation.baseSnapshot {
+                    record.setValue(base, forKey: "payload")
+                    record.setValue(Int64(operation.baseVersion), forKey: "serverVersion")
+                    record.setValue(SyncState.synced.rawValue, forKey: "syncState")
+                } else {
+                    context.delete(record)
+                }
+            }
             try context.save()
         }
         broadcaster.send()

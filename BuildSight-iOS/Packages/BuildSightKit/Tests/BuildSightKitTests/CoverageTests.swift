@@ -377,11 +377,7 @@ struct SyncCentreViewModelTests {
         let (vm, _, _) = try await make()
         await vm.reload()
         await vm.discard(vm.rows[0].id)
-        #expect(vm.rows.isEmpty)
-        // Known gap: discarding deletes the queued operation but leaves the record marked pending, so the
-        // summary keeps counting a change that can no longer be sent. Needs a decision: delete the record
-        // or mark it as not uploaded. This expectation is what the screen should show once that is decided.
-        withKnownIssue("Discard leaves the record marked pending") { #expect(vm.summary.total == 0) }
+        #expect(vm.rows.isEmpty && vm.summary.total == 0)
     }
 
     @Test("Retrying a failed change sends it again")
