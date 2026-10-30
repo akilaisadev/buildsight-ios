@@ -1,5 +1,6 @@
-// Committed build settings. Backend values come from the git-ignored Secrets.xcconfig
-// when it exists; without it the app still builds and shows "no backend configured".
+// Committed build settings. Backend.xcconfig holds the public URL and publishable key
+// so a fresh clone works. A git-ignored Secrets.xcconfig, if present, overrides it.
 BUILDSIGHT_BACKEND_URL =
 BUILDSIGHT_ANON_KEY =
+#include "Backend.xcconfig"
 #include? "Secrets.xcconfig"

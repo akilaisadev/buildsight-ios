@@ -1,0 +1,5 @@
+// Public client settings only: the Supabase project URL and the PUBLISHABLE key.
+// This key is designed to ship inside the app; access is enforced by row-level
+// security on the server. Never put an sb_secret_ / service-role key here.
+BUILDSIGHT_BACKEND_URL = https:/$()/aukybrqpclalxpgsfqvh.supabase.co
+BUILDSIGHT_ANON_KEY = sb_publishable_0-M9jxxmTHYn4lqnJZfkvg_UJY1XQES
