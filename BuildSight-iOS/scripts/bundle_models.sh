@@ -15,7 +15,7 @@ for NAME in PPEDetector HelmetDetector; do
   fi
 done
 if [ "$FOUND" -eq 0 ]; then
-  echo "note: no Core ML model in ML/models, building without a helmet model"
+  echo "warning: No Core ML model found in ML/models (PPEDetector.mlpackage). This build will say \"No helmet model is installed\". Copy the .mlpackage files into BuildSight-iOS/ML/models and build again."
 else
   echo "Bundled $FOUND Core ML model(s)"
 fi
