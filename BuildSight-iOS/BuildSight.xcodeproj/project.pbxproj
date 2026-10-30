@@ -11,6 +11,7 @@
 		066FE1C532D8E9331EDE4F5A /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACB27B8B1229B753A10FCDA /* QRScannerView.swift */; };
 		06E41F6FD5686A953F9F2F46 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56676EF87C57FE68600CEF3D /* ActivityView.swift */; };
 		0A1F7CEB9565EA129A5EC5E6 /* AuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C987AB285A94B05BB4182460 /* AuthViews.swift */; };
+		0AEC2472BC3540237F67DF00 /* WidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF403C872DD82E800F22DA1F /* WidgetViews.swift */; };
 		0B057ABDF8421ADB5CE1ABFD /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADBA181D9BA1BEB599F154A /* Router.swift */; };
 		0C9BA79E1BA6E16917DD8BD9 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285F86754FD0E61D6D48671B /* Components.swift */; };
 		0CF1FE44B7D51700C8D32B8F /* AreaQRCodesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE3E62090BAA37CC2C49E4 /* AreaQRCodesView.swift */; };
@@ -21,6 +22,7 @@
 		2E916F8E138C82055FA7208D /* PlatformModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097A29D08E6506AAC72DAD54 /* PlatformModifiers.swift */; };
 		34CDE700127E8DA0AAFAC9E7 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909599C5302FC01EF4C2272F /* LocationService.swift */; };
 		3DD2CBF8D64DC761A44EAE2A /* BuildSightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F6EFA459FD48D23556E275 /* BuildSightApp.swift */; };
+		4076FEA5F2B4E7CBC43DB276 /* BiometricLoginStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD2FF48A1D3AAF7C599F8BA /* BiometricLoginStore.swift */; };
 		4ECCD12D08EDFD2AA3112C68 /* BuildSightWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3BFD5A7A59B63E6EED27E5 /* BuildSightWidget.swift */; };
 		541A96B5D450BC4231C36784 /* LaunchAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A0B7EE8378559AD8A74600 /* LaunchAnimation.swift */; };
 		57950B64FBA172C648D8A34C /* MainShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1640DF9F855D1D687E27C1C /* MainShell.swift */; };
@@ -137,6 +139,8 @@
 		F9BA68FE6D4A5145DC6CA776 /* ml_metrics.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = ml_metrics.py; sourceTree = "<group>"; };
 		FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		FD1C0B21FA298BFD99948A82 /* SUBMISSION_CHECKLIST.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SUBMISSION_CHECKLIST.md; sourceTree = "<group>"; };
+		FDD2FF48A1D3AAF7C599F8BA /* BiometricLoginStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricLoginStore.swift; sourceTree = "<group>"; };
+		FF403C872DD82E800F22DA1F /* WidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViews.swift; sourceTree = "<group>"; };
 		FF78CABD88AF90DFBD44C47E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -350,6 +354,7 @@
 		8AF25EE7B2FCE5B37AF7958D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				FDD2FF48A1D3AAF7C599F8BA /* BiometricLoginStore.swift */,
 				CDB4D4C47AAB7778D9FD196B /* BiometricService.swift */,
 				C3B45374CEB8FF826E26ADD6 /* CameraService.swift */,
 				F7F90CF599A2FE597E51A382 /* ConnectivityMonitor.swift */,
@@ -434,6 +439,7 @@
 				DF3BFD5A7A59B63E6EED27E5 /* BuildSightWidget.swift */,
 				7D7A3B02F3B6E82F5DC311C6 /* Info.plist */,
 				0767AC65213EF8B3A83CF047 /* Widgets.entitlements */,
+				FF403C872DD82E800F22DA1F /* WidgetViews.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -561,7 +567,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\n# Xcode build phase: compile ML/models/*.mlpackage into the app bundle when they exist.\n# The model weights are git-ignored (licence), so a fresh clone has none; the app still\n# builds and reports \"no helmet model installed\". Drop PPEDetector.mlpackage (and optionally\n# HelmetDetector.mlpackage) into ML/models/ and build again to include them.\nset -e\nDEST=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nFOUND=0\nfor NAME in PPEDetector HelmetDetector; do\n  SRC=\"$SRCROOT/ML/models/$NAME.mlpackage\"\n  rm -rf \"$DEST/$NAME.mlmodelc\"\n  if [ -d \"$SRC\" ]; then\n    xcrun coremlcompiler compile \"$SRC\" \"$DEST\"\n    FOUND=$((FOUND + 1))\n  fi\ndone\nif [ \"$FOUND\" -eq 0 ]; then\n  echo \"warning: No Core ML model found in ML/models (PPEDetector.mlpackage). This build will say \\\"No helmet model is installed\\\". Copy the .mlpackage files into BuildSight-iOS/ML/models and build again.\"\nelse\n  echo \"Bundled $FOUND Core ML model(s)\"\nfi\n";
+			shellScript = "#!/bin/sh\n# Xcode build phase: compiles any ML/models/*.mlpackage into the app bundle.\n# With none present the app still builds and says no helmet model is installed.\nset -e\nDEST=\"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nFOUND=0\nfor NAME in PPEDetectorV2 PPEDetector HelmetDetector; do\n  SRC=\"$SRCROOT/ML/models/$NAME.mlpackage\"\n  rm -rf \"$DEST/$NAME.mlmodelc\"\n  if [ -d \"$SRC\" ]; then\n    xcrun coremlcompiler compile \"$SRC\" \"$DEST\"\n    FOUND=$((FOUND + 1))\n  fi\ndone\nif [ \"$FOUND\" -eq 0 ]; then\n  echo \"warning: No Core ML model found in ML/models (PPEDetector.mlpackage). This build will say \\\"No helmet model is installed\\\". Copy the .mlpackage files into BuildSight-iOS/ML/models and build again.\"\nelse\n  echo \"Bundled $FOUND Core ML model(s)\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -571,6 +577,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4ECCD12D08EDFD2AA3112C68 /* BuildSightWidget.swift in Sources */,
+				0AEC2472BC3540237F67DF00 /* WidgetViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,6 +589,7 @@
 				DC051D9474FF9E085AC81836 /* AppEnvironment.swift in Sources */,
 				0CF1FE44B7D51700C8D32B8F /* AreaQRCodesView.swift in Sources */,
 				0A1F7CEB9565EA129A5EC5E6 /* AuthViews.swift in Sources */,
+				4076FEA5F2B4E7CBC43DB276 /* BiometricLoginStore.swift in Sources */,
 				D8F86F58C8D76E72771DFBEC /* BiometricService.swift in Sources */,
 				3DD2CBF8D64DC761A44EAE2A /* BuildSightApp.swift in Sources */,
 				87EE104E88C7DA0E5E53A05D /* CameraService.swift in Sources */,

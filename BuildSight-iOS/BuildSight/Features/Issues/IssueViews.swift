@@ -173,7 +173,7 @@ struct IssueDetailView: View {
                 if let analysis {
                     Text(analysis.outcome?.summary ?? "Analysis unavailable").font(.headline)
                     if let equipment = analysis.equipment { Text(equipment.summary).font(.subheadline) }
-                    Text("Model \(analysis.modelIdentifier) \(analysis.modelVersion) · policy \(analysis.policyVersion) · \(formatted(analysis.analysedAt))").font(.caption).foregroundStyle(Theme.secondaryText)
+                    Text("Analysed \(formatted(analysis.analysedAt))").font(.caption).foregroundStyle(Theme.secondaryText)
                     Text("Scores are the model's raw confidence, not calibrated probabilities.").font(.caption).foregroundStyle(Theme.secondaryText)
                 }
                 if model.canReviewFlag(issue), let analysis {

@@ -7,18 +7,9 @@ public struct MergeOutcome: Equatable, Sendable {
     public var conflictedFields: [String]
 }
 
-/// Field-level three-way merge: base (last synced), local (our edit) and
-/// remote (current server copy).
-///
-/// Policy, chosen so offline edits are rarely lost but the server stays the
-/// authority:
-///  - only we changed a field  → keep ours
-///  - only the server changed  → keep theirs
-///  - both changed identically → either
-///  - both changed differently → the server value wins and the field is
-///    reported as conflicted
-/// Append-only records (audit events, comments) never reach this path: they
-/// are created once, keyed by id, so replays are no-ops rather than conflicts.
+/// Field-level three-way merge of base (last synced), local and remote. If only one side
+/// changed a field, that side wins; if both changed it differently, the server wins and the
+/// field is reported as conflicted. Append-only records (events, comments) never get here.
 public enum ConflictResolver {
     public static func merge(base: JSONValue?, local: JSONValue, remote: JSONValue) -> MergeOutcome? {
         guard let local = local.objectValue, let remote = remote.objectValue else { return nil }

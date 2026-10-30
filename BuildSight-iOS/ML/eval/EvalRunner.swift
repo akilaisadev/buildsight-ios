@@ -1,7 +1,5 @@
-// Runs the bundled detector over a folder of images and prints one JSON line per
-// image: raw observations (after the model's own NMS), the policy's outcome and
-// the measured inference time. Metrics are computed separately by
-// ml_metrics.py so the Swift code never grades its own homework.
+// Runs the detector over a folder of images and prints one JSON line per image
+// (observations, outcome, time). Scoring is done separately by ml_metrics.py.
 //
 //   swiftc … EvalRunner.swift -lBuildSightKit -o eval-runner
 //   ./eval-runner HelmetDetector.mlpackage images/ > predictions.jsonl
@@ -17,7 +15,8 @@ struct EvalRunner {
         let dir = URL(fileURLWithPath: args[2])
         do {
             // The five-class PPE model has its own label map; anything else is the helmet-only model.
-            let descriptor: HelmetModelDescriptor = model.lastPathComponent.hasPrefix("PPE") ? .ppeYOLOv8s : .candidateKeremberkeYOLOv8n
+            let name = model.lastPathComponent
+            let descriptor: HelmetModelDescriptor = name.hasPrefix("PPEDetectorV2") ? .ppeSafetyVisionV2 : name.hasPrefix("PPE") ? .ppeYOLOv8s : .candidateKeremberkeYOLOv8n
             let analyzer = try CoreMLHelmetAnalyzer(modelURL: model, descriptor: descriptor)
             let files = try FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
                 .filter { ["jpg", "jpeg", "png"].contains($0.pathExtension.lowercased()) }.sorted { $0.lastPathComponent < $1.lastPathComponent }

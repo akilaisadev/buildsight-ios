@@ -1,9 +1,7 @@
 import Foundation
 import CoreGraphics
-/// A rectangle in normalised image coordinates with the origin at the
-/// TOP-left (UIKit/SwiftUI convention). Vision reports boxes from the
-/// bottom-left; `CoreMLHelmetAnalyzer` flips them once at the boundary so
-/// nothing downstream has to remember which convention applies.
+/// A rectangle in normalised image coordinates, origin top-left like UIKit/SwiftUI.
+/// Vision uses bottom-left, so the analyzer flips boxes once at the boundary.
 public struct NormalizedRect: Codable, Hashable, Sendable {
     public var x: Double
     public var y: Double
@@ -112,6 +110,17 @@ public struct HelmetModelDescriptor: Codable, Hashable, Sendable {
         inputSide: 640,
         sourceDescription: "huggingface.co/keremberke/yolov8n-hard-hat-detection, trained on the Roboflow hard-hat-detection dataset",
         licenceNote: "Repository declares no licence; YOLOv8 code is AGPL-3.0. Unresolved."
+    )
+
+    /// SafetyVision v2 (13 classes, 80k images). Only the five classes the app understands are mapped;
+    /// Person, Goggles, Mask, Fall-Detected, No_Harness and NO-Safety Vest are ignored.
+    public static let ppeSafetyVisionV2 = HelmetModelDescriptor(
+        identifier: "safetyvision-ppe-v2",
+        version: "2026-10",
+        labelMap: ["Hardhat": .helmet, "NO-Hardhat": .noHelmet, "Safety Vest": .vest, "Gloves": .gloves, "NO-Gloves": .noGloves],
+        inputSide: 640,
+        sourceDescription: "huggingface.co/ayushgupta7777/safetyvision-yolov8 (v2), YOLOv8 trained on a merge of five Roboflow Universe PPE datasets (80,304 images after de-duplication)",
+        licenceNote: "Weights are AGPL-3.0 (Ultralytics YOLOv8). Included for coursework use only; not cleared for wider redistribution."
     )
 
     /// Multi-class PPE model trained in this project (ML/training/train_ppe_v2.py).

@@ -16,10 +16,8 @@ struct BrandMark: View {
     }
 }
 
-/// Launch animation: the logo springs in, ripples pulse out from it, a light sweeps across
-/// its shape, the name rises in letter by letter and a progress bar fills. Always on a white
-/// canvas (the logo's black ribbon needs it), matching the launch background and the icon.
-/// With Reduce Motion on it shows the finished frame.
+/// Logo springs in, ripples pulse, light sweeps over it, the name rises letter by letter and a
+/// bar fills. Always on white (the black ribbon needs it). Reduce Motion shows the end frame.
 struct LaunchBuildingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 

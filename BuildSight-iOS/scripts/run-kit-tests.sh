@@ -1,11 +1,7 @@
 #!/bin/zsh
-# Builds BuildSightKit and runs its Swift Testing suite without SwiftPM.
-#
-# Why this exists: on the machine this was authored on, only the Command Line
-# Tools are installed and `swift build` fails at the manifest link step. With
-# full Xcode, prefer `swift test` in Packages/BuildSightKit, or Cmd+U in Xcode.
-# The clang overlay hides a duplicate SwiftBridging modulemap that ships with
-# some CLT releases; it is harmless where the duplicate does not exist.
+# Builds BuildSightKit and runs its tests without SwiftPM, for machines with only the
+# Command Line Tools. With full Xcode use `swift test` or Cmd+U instead.
+# The clang overlay hides a duplicate SwiftBridging modulemap that some CLT releases ship.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PKG="$ROOT/Packages/BuildSightKit"

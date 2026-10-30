@@ -19,13 +19,9 @@ public enum TaskError: Error, Equatable, Sendable {
 }
 
 public enum TaskScheduling {
-    /// Definition used everywhere (list, badges, dashboard, notifications):
-    ///  - done:     status is completed, regardless of date
-    ///  - overdue:  not completed and the due instant has passed
-    ///  - today:    not completed, due later today
-    ///  - upcoming: not completed, due after today
-    /// "Now" and the calendar are parameters so tests are deterministic and
-    /// the app respects the device's time zone.
+    /// Bucket used everywhere (list, badges, dashboard, notifications):
+    /// done = completed, overdue = due time passed, today = due later today, upcoming = after today.
+    /// `now` and the calendar are passed in so tests are deterministic.
     public static func bucket(for task: TaskItem, now: Date, calendar: Calendar = .current) -> TaskBucket {
         if task.status == .completed { return .done }
         if task.dueDate < now { return .overdue }

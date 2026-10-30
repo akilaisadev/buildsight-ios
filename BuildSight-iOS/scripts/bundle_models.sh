@@ -1,12 +1,10 @@
 #!/bin/sh
-# Xcode build phase: compile ML/models/*.mlpackage into the app bundle when they exist.
-# The model weights are git-ignored (licence), so a fresh clone has none; the app still
-# builds and reports "no helmet model installed". Drop PPEDetector.mlpackage (and optionally
-# HelmetDetector.mlpackage) into ML/models/ and build again to include them.
+# Xcode build phase: compiles any ML/models/*.mlpackage into the app bundle.
+# With none present the app still builds and says no helmet model is installed.
 set -e
 DEST="$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH"
 FOUND=0
-for NAME in PPEDetector HelmetDetector; do
+for NAME in PPEDetectorV2 PPEDetector HelmetDetector; do
   SRC="$SRCROOT/ML/models/$NAME.mlpackage"
   rm -rf "$DEST/$NAME.mlmodelc"
   if [ -d "$SRC" ]; then

@@ -69,9 +69,9 @@ final class Workspace: ObservableObject {
     }
 
     private static func loadAnalyzer() -> (analyzer: CoreMLHelmetAnalyzer?, problem: String?) {
-        // Prefer the multi-class PPE model; fall back to the helmet-only one.
+        // Prefer the newest multi-class PPE model, then the older one, then the helmet-only model.
         var problem: String?
-        let candidates: [(String, HelmetModelDescriptor)] = [("PPEDetector", .ppeYOLOv8s), ("HelmetDetector", .candidateKeremberkeYOLOv8n)]
+        let candidates: [(String, HelmetModelDescriptor)] = [("PPEDetectorV2", .ppeSafetyVisionV2), ("PPEDetector", .ppeYOLOv8s), ("HelmetDetector", .candidateKeremberkeYOLOv8n)]
         for (name, descriptor) in candidates {
             guard let url = Bundle.main.url(forResource: name, withExtension: "mlmodelc") else { continue }
             do {
@@ -99,6 +99,9 @@ final class AppEnvironment: ObservableObject {
     let tokens: AuthTokenSource?
     @Published private(set) var workspace: Workspace?
     @Published var launchError: String?
+    let biometricLogin = BiometricLoginStore()
+    /// Set right after a password sign-in, so the signed-in screen can ask "Use Face ID next time?".
+    @Published var biometricOffer: BiometricLoginOffer?
 
     init() {
         let config = BackendSettings.config
@@ -126,6 +129,35 @@ final class AppEnvironment: ObservableObject {
     }
 
     func signedOut() { workspace = nil }
+
+    // MARK: - Face ID / Touch ID sign-in
+
+    /// Called after a successful password sign-in. Only offers when biometrics work and this
+    /// account's login isn't already saved.
+    func offerBiometricLogin(email: String, password: String) {
+        guard BiometricLabel.current != nil, biometricLogin.savedEmail != email else { return }
+        biometricOffer = BiometricLoginOffer(email: email, password: password)
+    }
+
+    func declineBiometricOffer() { biometricOffer = nil }
+
+    /// Confirms Face ID / Touch ID works, then saves the login. Returns a message only when something failed.
+    func acceptBiometricOffer() async -> String? {
+        guard let offer = biometricOffer, let label = BiometricLabel.current else { return nil }
+        biometricOffer = nil
+        switch await BiometricService().authenticate(reason: "Turn on sign-in with \(label.name)") {
+        case .success: break
+        case .cancelled: return nil
+        default: return "\(label.name) didn't confirm, so sign-in with it stays off."
+        }
+        do { try biometricLogin.save(email: offer.email, password: offer.password); return nil }
+        catch { return "Couldn't save the \(label.name) sign-in on this device." }
+    }
+}
+
+struct BiometricLoginOffer: Equatable {
+    let email: String
+    let password: String
 }
 
 private struct UnconfiguredAuth: AuthProvider {

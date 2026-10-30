@@ -19,12 +19,8 @@ public struct ReminderRequest: Equatable, Sendable {
     public var deepLink: DeepLink
 }
 
-/// Decides which LOCAL reminders should exist. Scheduling them with
-/// UserNotifications is the app layer's job; keeping the decision pure makes it
-/// testable and makes it easy to re-plan from scratch after any change.
-///
-/// These are device-local reminders. They are not remote push notifications,
-/// which need an APNs-backed server and are documented separately.
+/// Decides which local reminders should exist; the app layer schedules them. Pure, so it
+/// is testable and can re-plan from scratch. Not remote push.
 public enum ReminderPlanner {
     /// iOS keeps at most 64 pending local notifications per app.
     public static let maxPending = 50

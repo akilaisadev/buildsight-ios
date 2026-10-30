@@ -3,10 +3,8 @@ import SwiftUI
 import WidgetKit
 import BuildSightKit
 
-/// Decides WHEN to sync; `SyncEngine` decides HOW. Triggers: a local change
-/// (requestSync), the app becoming active, and connectivity returning. After
-/// each drain it pulls server changes, refreshes the widget snapshot and
-/// re-plans local reminders, so those never drift from the stored data.
+/// Decides when to sync (local change, app active, back online); `SyncEngine` does the work.
+/// After each sync it pulls changes, refreshes the widget and re-plans reminders.
 @MainActor
 final class SyncCoordinator: SyncTriggering, ObservableObject {
     @Published private(set) var isSyncing = false

@@ -11,6 +11,7 @@ struct SignInView: View {
     @State private var showErrors = false
     @FocusState private var focus: Field?
     private enum Field { case email, password }
+    private var biometric: (name: String, symbol: String)? { environment.biometricLogin.savedEmail == nil ? nil : BiometricLabel.current }
 
     private var emailError: String? {
         let value = email.trimmingCharacters(in: .whitespaces)
@@ -104,6 +105,14 @@ struct SignInView: View {
                 Button(action: signIn) { if busy { ProgressView() } else { Text("Sign In") } }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(busy || environment.config == nil)
+                if let biometric, let saved = environment.biometricLogin.savedEmail {
+                    Button { Task { await biometricSignIn(biometric.name) } } label: {
+                        Label("Sign in with \(biometric.name)", systemImage: biometric.symbol)
+                    }
+                    .buttonStyle(SecondaryButtonStyle()).disabled(busy || environment.config == nil)
+                    .accessibilityHint("Signs in as \(saved)")
+                    Text("Signing in as \(saved)").font(.footnote).foregroundStyle(Theme.secondaryText)
+                }
                 Button("Forgot password?") { showReset = true }
                     .font(.body.weight(.semibold)).foregroundStyle(Theme.accentText).frame(minHeight: Glove.target)
             }
@@ -125,9 +134,30 @@ struct SignInView: View {
         busy = true; error = nil
         Task {
             defer { busy = false }
-            do { _ = try await environment.session.signIn(email: email, password: password); password = "" }
+            do {
+                _ = try await environment.session.signIn(email: email, password: password)
+                environment.offerBiometricLogin(email: email.trimmingCharacters(in: .whitespaces), password: password)
+                password = ""
+            }
             catch let e as AuthError { error = e.userMessage }
             catch { self.error = error.localizedDescription }
+        }
+    }
+
+    /// Reads the saved login (this shows the Face ID / Touch ID prompt) and signs in with it.
+    private func biometricSignIn(_ name: String) async {
+        guard !busy else { return }
+        error = nil
+        switch await environment.biometricLogin.load(reason: "Sign in to BuildSight") {
+        case .success(let saved):
+            busy = true
+            defer { busy = false }
+            do { _ = try await environment.session.signIn(email: saved.email, password: saved.password) }
+            catch let e as AuthError { error = e.userMessage }
+            catch { self.error = error.localizedDescription }
+        case .cancelled: break
+        case .failed: error = "\(name) didn't recognise you. Try again, or sign in with your password."
+        case .invalidated: error = "\(name) sign-in was reset because your device's biometrics changed. Sign in with your password to turn it on again."
         }
     }
 }
@@ -208,7 +238,9 @@ struct LockView: View {
                     }
                 }.buttonStyle(PrimaryButtonStyle()).disabled(password.isEmpty || busy)
             } else {
-                Button("Unlock") { Task { await unlock() } }.buttonStyle(PrimaryButtonStyle())
+                Button { Task { await unlock() } } label: {
+                    if let label = BiometricLabel.current { Label("Unlock with \(label.name)", systemImage: label.symbol) } else { Text("Unlock") }
+                }.buttonStyle(PrimaryButtonStyle())
             }
             Button("Sign Out") { askSignOut = true }.frame(minHeight: Glove.target)
         }

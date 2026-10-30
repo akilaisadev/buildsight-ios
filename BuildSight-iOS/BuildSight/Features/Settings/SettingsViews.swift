@@ -92,6 +92,7 @@ struct SettingsView: View {
     @State private var cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     @State private var biometricMessage: String?
+    @State private var loginRemoved = false   // changes when the saved biometric login is removed, to redraw
     @State private var confirmSignOut: SignOutDecision?
     @State private var askSignOut = false
     @State private var showSyncCenter = false
@@ -122,6 +123,10 @@ struct SettingsView: View {
             Section {
                 Toggle("Require Face ID / Touch ID", isOn: Binding(get: { session.biometricGateEnabled }, set: { on in Task { await setGate(on) } }))
                 if let biometricMessage { Text(biometricMessage).font(.footnote).foregroundStyle(Theme.status("critical").fg) }
+                if let saved = environment.biometricLogin.savedEmail, let label = BiometricLabel.current {
+                    LabeledContent("\(label.name) sign-in", value: saved)
+                    Button("Remove \(label.name) sign-in", role: .destructive) { environment.biometricLogin.remove(); biometricMessage = nil; loginRemoved.toggle() }
+                }
             } header: { Text("Security") } footer: { Text("Biometrics lock the app on this device. They don't replace signing in: the server still checks your account and project role on every request.") }
 
             Section("Permissions") {
@@ -150,7 +155,7 @@ struct SettingsView: View {
             }
             Section("Data") {
                 NavigationLink("Sync Center", value: Route.syncCenter)
-                if let d = context.workspace.analyzerDescriptor { LabeledContent("Helmet model", value: "\(d.identifier) \(d.version)") }
+                if context.workspace.analyzerDescriptor != nil { LabeledContent("Helmet check", value: "Ready, runs on this device") }
                 else if let problem = context.workspace.analyzerProblem { Text("\(problem). Photos are still saved; analysis is unavailable.").font(.footnote).foregroundStyle(Theme.status("high").fg) }
                 else { Text("No helmet model is installed in this build. Photos are still saved; analysis is unavailable. To add it, copy PPEDetector.mlpackage into ML/models on the Mac and build again.").font(.footnote).foregroundStyle(Theme.secondaryText) }
             }

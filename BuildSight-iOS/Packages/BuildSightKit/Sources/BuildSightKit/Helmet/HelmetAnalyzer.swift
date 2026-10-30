@@ -22,10 +22,8 @@ public protocol HelmetAnalyzing: Sendable {
     func analyse(imageAt url: URL) async throws -> HelmetRawResult
 }
 
-/// Image sharpness without any ML: variance of a 3×3 Laplacian over a small
-/// greyscale copy. Blurry or motion-smeared photos give low variance. The
-/// threshold in `HelmetThresholdPolicy` is provisional and tuned on the
-/// evaluation set, so this is a heuristic gate, not a measurement of truth.
+/// Image sharpness without ML: variance of a Laplacian on a small greyscale copy. Blurry
+/// photos score low. The threshold is provisional, so treat it as a rough gate.
 public enum ImageSharpness {
     public static func laplacianVariance(pixels: [UInt8], width: Int, height: Int) -> Double {
         guard width >= 3, height >= 3, pixels.count >= width * height else { return 0 }
@@ -58,16 +56,10 @@ public enum ImageSharpness {
     }
 }
 
-/// Runs the bundled Core ML detector through Vision, fully on device.
-///
-/// Notes for the viva:
-///  - Input: the image is decoded upright (EXIF orientation applied) and
-///    capped at 1600 px; Vision then scales it to the model's square input with
-///    `.scaleFill`, the mode Ultralytics' Core ML export is trained for. Boxes
-///    come back normalised to the upright image, so no rotation maths is needed.
-///  - Output: the model is exported with non-maximum suppression inside the
-///    Core ML pipeline, which makes Vision return `VNRecognizedObjectObservation`s.
-///  - No network access of any kind is used here.
+/// Runs the Core ML detector through Vision, fully on device (no network).
+/// The photo is decoded upright and capped at 1600 px; Vision scales it to the model input
+/// (`.scaleFill`, what Ultralytics exports expect). The model has NMS built in, so Vision
+/// returns ready-made observations with boxes normalised to the upright image.
 public final class CoreMLHelmetAnalyzer: HelmetAnalyzing, @unchecked Sendable {
     public let descriptor: HelmetModelDescriptor
     private let visionModel: VNCoreMLModel

@@ -7,11 +7,8 @@ public enum EvidenceFileError: Error, Equatable, Sendable {
     case writeFailed
 }
 
-/// Keeps original evidence on disk, outside Core Data, one JPEG per photo id.
-///
-/// The image is re-encoded upright once on save so EXIF orientation can never
-/// disagree between the display, the detector and the uploaded file. No overlay
-/// is ever drawn into these files: boxes are rendered at display time.
+/// Original evidence on disk, one JPEG per photo id, outside Core Data. Saved upright once so
+/// orientation can't disagree; boxes are drawn at display time, never into the file.
 public struct EvidenceFileStore: EvidenceFileStoring {
     public let directory: URL
 

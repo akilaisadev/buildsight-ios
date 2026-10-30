@@ -2,15 +2,10 @@ import Foundation
 import Security
 import BuildSightKit
 
-/// Stores the auth session in the Keychain, never in UserDefaults or on disk.
-/// `AfterFirstUnlockThisDeviceOnly`: readable by background sync after the first
-/// unlock, never copied to another device or into a backup.
+/// Keeps the auth session in the Keychain (after first unlock, this device only).
 ///
-/// Development exception: an UNSIGNED Mac Catalyst Debug build has no keychain
-/// entitlement, so the Keychain refuses with errSecMissingEntitlement (-34018).
-/// Only in that situation (Debug + Mac Catalyst) the session is kept in a 0600 file
-/// in Application Support so the app can be tried without a signing certificate.
-/// Release builds and iOS builds never use the file; they only use the Keychain.
+/// An unsigned Mac Catalyst Debug build has no keychain entitlement (-34018), so only there
+/// it falls back to a private file. iOS and Release builds use the Keychain alone.
 struct KeychainSessionStore: SecureSessionStore {
     private let service = "com.buildsight.session"
     private let account = "current"
@@ -51,11 +46,8 @@ struct KeychainSessionStore: SecureSessionStore {
         #endif
     }
 
-    /// `kSecUseDataProtectionKeychain` selects the iOS-style keychain on every platform. Without it a
-    /// Mac (Catalyst) build uses the file-based login keychain, which asks for the keychain password
-    /// whenever the app's signature changes (every rebuild) and rejects a Mac login password that no
-    /// longer matches the keychain's. The data protection keychain is tied to the app's entitlements
-    /// and never prompts. (iOS already behaves this way; the flag makes macOS match.)
+    /// Uses the data protection keychain on every platform. On a Mac the default login
+    /// keychain asks for a password after each rebuild and can reject the Mac password.
     private func baseQuery() -> [String: Any] {
         [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account,
          kSecUseDataProtectionKeychain as String: true]

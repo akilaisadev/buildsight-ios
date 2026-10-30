@@ -24,6 +24,7 @@ struct MainShell: View {
     @EnvironmentObject private var router: AppRouter
     @Environment(\.horizontalSizeClass) private var sizeClass
     @StateObject private var toaster = Toaster()
+    @EnvironmentObject private var environment: AppEnvironment
 
     init(workspace: Workspace, actor: ActingUser) {
         _context = StateObject(wrappedValue: ScreenContext(workspace: workspace, actor: actor))
@@ -36,6 +37,10 @@ struct MainShell: View {
         .environmentObject(context)
         .environmentObject(toaster)
         .toastHost(toaster)
+        .alert("Sign in with \(BiometricLabel.current?.name ?? "biometrics") next time?", isPresented: Binding(get: { environment.biometricOffer != nil }, set: { if !$0 { environment.declineBiometricOffer() } })) {
+            Button("Not Now", role: .cancel) { environment.declineBiometricOffer() }
+            Button("Turn On") { Task { if let problem = await environment.acceptBiometricOffer() { toaster.error(problem) } else if environment.biometricLogin.savedEmail != nil { toaster.success("\(BiometricLabel.current?.name ?? "Biometric") sign-in is on") } } }
+        } message: { Text("Skip typing your password on the login screen. It stays in this device's secure keychain and needs \(BiometricLabel.current?.name ?? "biometrics") to open.") }
         // Glove-sized rows in every list (system default is 44 pt).
         .environment(\.defaultMinListRowHeight, Glove.target)
         .task { await context.data.observe() }
@@ -149,10 +154,8 @@ struct PhoneShell: View {
         // Solid header on every screen: scrolling content never shows through the top bar.
         .toolbarBackground(Theme.background, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
-        // The bar floats over the content (as in the Figma). Scroll content gets bottom
-        // margin so the last rows scroll up above the bar and stay reachable.
-        // Applied to the whole stack, so EVERY screen in it (however it was opened: route,
-        // NavigationLink, sheet-free push) leaves room for the floating bar at the bottom.
+        // The bar floats over content, so scrolling screens get bottom margin to stay
+        // reachable. Set on the whole stack so pushed screens get it too.
         .contentMargins(isLandscape ? .leading : .bottom, isLandscape ? Self.railClearance : Self.barClearance, for: .scrollContent)
         // A soft fade to the page colour under the bar, so text scrolling past the bottom
         // edge (and under the home indicator) never shows behind the bar.

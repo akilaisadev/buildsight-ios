@@ -28,11 +28,8 @@ public enum BiometricGateOutcome: Equatable, Sendable {
     case notAvailable
 }
 
-/// Owns "who is signed in and may they see the app right now".
-///
-/// Biometrics only gate access to an ALREADY authenticated backend session.
-/// They never mint or replace one: if the session has expired, Face ID alone
-/// cannot get the user back in, which is exactly the proposal's requirement.
+/// Who is signed in and whether the app is unlocked. Biometrics only unlock an existing
+/// session, they can't create one, so an expired session still needs the password.
 @MainActor
 @Observable
 public final class SessionManager {

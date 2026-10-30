@@ -8,11 +8,8 @@ public struct CaptureOutcome: Sendable {
     public var createdNewIssue: Bool
 }
 
-/// Drives the capture flow: camera → review → save → analyse → result.
-///
-/// Ordering is deliberate: the evidence photo is committed to local storage
-/// BEFORE inference starts, so a model failure, a crash or a slow device can
-/// never lose the photo.
+/// Capture flow: camera → review → save → analyse → result. The photo is saved before
+/// inference starts, so a model failure or crash never loses it.
 @MainActor
 @Observable
 public final class CaptureViewModel {

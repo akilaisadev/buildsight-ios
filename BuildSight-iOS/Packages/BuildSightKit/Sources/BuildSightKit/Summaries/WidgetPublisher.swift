@@ -1,9 +1,7 @@
 import Foundation
 
-/// Recomputes the widget snapshot from stored records and writes it to the
-/// shared container. WidgetKit decides when a widget actually refreshes; this
-/// only guarantees the data it will read is current whenever the app changes
-/// something. `reloadTimelines` is injected so the package stays free of WidgetKit.
+/// Rebuilds the widget snapshot from stored records and writes it to the shared container.
+/// WidgetKit decides when it refreshes; `reloadTimelines` is injected to keep WidgetKit out.
 public struct WidgetSnapshotPublisher: Sendable {
     private let repository: ProjectRepository
     private let snapshots: WidgetSnapshotStore

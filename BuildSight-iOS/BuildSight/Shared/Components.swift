@@ -133,10 +133,8 @@ struct SkeletonList: View {
     }
 }
 
-/// On regular-width screens (iPad) centre content in a readable column instead of
-/// stretching it edge to edge: about 760 pt wide with extra side margin, so long lines
-/// of text stay comfortable and cards don't run to the screen edges. Phones and
-/// compact widths (Split View, Slide Over) are untouched.
+/// Centres content in a ~760 pt column on iPad so text and cards don't stretch edge to edge.
+/// Phones and compact widths are unchanged.
 struct ReadableColumn: ViewModifier {
     @Environment(\.horizontalSizeClass) private var sizeClass
     static let maxWidth: CGFloat = 760

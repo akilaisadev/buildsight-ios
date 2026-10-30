@@ -2,13 +2,8 @@ import Foundation
 import UserNotifications
 import BuildSightKit
 
-/// Local reminders (task and inspection due times) via UserNotifications.
-///
-/// Three different things share the word "notification" in BuildSight:
-///  1. In-app notifications: records in the Notifications tab (always works).
-///  2. Local reminders: scheduled here from `ReminderPlanner`, work offline.
-///  3. Remote push (APNs): needs an Apple Developer account and a server that
-///     sends pushes. NOT implemented in this build; see docs/KNOWN_LIMITATIONS.md.
+/// Local reminders for task and inspection due times, via UserNotifications.
+/// Not remote push, which needs an Apple account and a server (see docs/KNOWN_LIMITATIONS.md).
 @MainActor
 final class NotificationScheduler {
     private let center = UNUserNotificationCenter.current()

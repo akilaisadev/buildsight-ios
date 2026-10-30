@@ -1,9 +1,7 @@
 import Foundation
 
-/// Drains the persisted operation queue against the backend.
-///
-/// An actor so two triggers (app foregrounded + connectivity restored) can
-/// never run overlapping drains and send the same operation twice.
+/// Sends the queued operations to the backend. An actor, so two triggers can't run
+/// overlapping drains and send the same operation twice.
 public actor SyncEngine {
     private let store: SyncQueueStore
     private let backend: RemoteBackend

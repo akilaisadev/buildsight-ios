@@ -1,11 +1,8 @@
 import Foundation
 
-/// Everything the project dashboard shows, computed from stored records.
-///
-/// Deliberately no "safety score": a single number invites reading it as an
-/// objective measure of site safety, which detector output and open-issue
-/// counts cannot support. Tiles are plain, defined counts that each link to
-/// the records behind them.
+/// What the dashboard shows, computed from stored records. There is deliberately no "safety
+/// score": one number can't honestly summarise detector output and open issues. Tiles are
+/// plain counts that link to their records.
 public struct DashboardSummary: Equatable, Sendable {
     public var openIssuesByPriority: [Priority: Int]
     public var openIssueTotal: Int
@@ -19,10 +16,8 @@ public struct DashboardSummary: Equatable, Sendable {
     public var areasUnderStopWork: Int
 }
 
-/// Meaning of each number is fixed here and repeated in the widget and docs:
-///  - unreviewed: machine flags no person has judged yet
-///  - confirmed:  flags a person confirmed or corrected (a real finding)
-///  - dismissed:  flags a person rejected
+/// Meaning of each number (same in the widget and docs): unreviewed = flags nobody has judged,
+/// confirmed = a person confirmed or corrected it, dismissed = a person rejected it.
 public struct HelmetFlagSummary: Equatable, Codable, Sendable {
     public var unreviewed = 0
     public var confirmed = 0

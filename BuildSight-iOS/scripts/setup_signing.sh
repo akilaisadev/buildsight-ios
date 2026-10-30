@@ -1,11 +1,10 @@
 #!/bin/zsh
-# One-step signing setup for running BuildSight on your own iPhone/iPad.
-# Writes Config/Signing.xcconfig (git-ignored) with your team ID and a bundle id that is
-# unique to you, so Apple never reports the bundle id or app group as "not available".
+# Writes Config/Signing.xcconfig (git-ignored) with your team ID and a unique bundle id,
+# so signing works on your own team.
 #
-#   ./scripts/setup_signing.sh              # detect the team from your signing certificate
-#   ./scripts/setup_signing.sh ABCDE12345   # or pass your team ID (Xcode > Settings > Accounts)
-#   ./scripts/setup_signing.sh --force      # overwrite an existing Config/Signing.xcconfig
+#   ./scripts/setup_signing.sh              # team detected from your certificate
+#   ./scripts/setup_signing.sh ABCDE12345   # or pass the team ID
+#   ./scripts/setup_signing.sh --force      # replace an existing file
 set -e
 cd "$(dirname "$0")/.."
 OUT=Config/Signing.xcconfig

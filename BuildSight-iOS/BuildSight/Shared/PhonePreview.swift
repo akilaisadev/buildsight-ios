@@ -1,16 +1,8 @@
 import SwiftUI
 
-/// Development aid: shows the iPhone layout in the Mac Catalyst window.
-///
-/// A Mac window always reports a "regular" width, so the app shows its iPad layout
-/// and the iPhone layout (`PhoneShell`, a tab bar) can never appear. Launching with
-///
-///     open BuildSight.app --args -PreviewPhone YES
-///
-/// reports a compact width and fixes the window at iPhone size (390 x 844 points).
-/// Debug builds on Mac Catalyst only: iOS and Release builds compile none of this.
-/// It approximates the phone layout; fonts, safe areas and navigation chrome still
-/// follow macOS rules, so it does not replace testing on an iPhone or the simulator.
+/// Debug aid: shows the iPhone layout in the Mac Catalyst window (a Mac always reports a
+/// regular width). Run `open BuildSight.app --args -PreviewPhone YES` for a 390 x 844 window.
+/// Not a substitute for testing on a phone.
 #if DEBUG && targetEnvironment(macCatalyst)
 import UIKit
 

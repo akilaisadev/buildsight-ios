@@ -3,16 +3,10 @@ import CoreData
 
 /// Core Data implementation of `LocalStore`.
 ///
-/// Design choice worth defending in the viva: records are stored as a Codable
-/// payload plus a handful of indexed columns (type, project, parent, sort date,
-/// sync state), instead of one Core Data entity per record type. Every query the
-/// app needs filters on those columns, the payload decodes into the same Swift
-/// types the rest of the app uses, and adding a field to a record needs no
-/// store migration. The cost is that Core Data cannot join across records, so
-/// relationships are explicit IDs resolved in repositories.
-///
-/// The managed object model is built in code (not an .xcdatamodeld) so the
-/// package compiles and is testable with plain `swiftc`/SwiftPM.
+/// Each record is stored as a Codable payload plus a few indexed columns (type, project,
+/// parent, date, sync state) instead of an entity per type. Queries stay simple and adding a
+/// field needs no migration; relationships are plain ids resolved in repositories. The model
+/// is built in code so the package builds with plain SwiftPM.
 public final class CoreDataLocalStore: LocalStore, @unchecked Sendable {
     private let container: NSPersistentContainer
     private let broadcaster = ChangeBroadcaster()
@@ -176,10 +170,8 @@ public final class CoreDataLocalStore: LocalStore, @unchecked Sendable {
         broadcaster.send()
     }
 
-    /// Coalesces with a not-yet-started operation for the same record: the
-    /// latest payload replaces the old one but the ORIGINAL base snapshot is
-    /// kept, so a record edited five times offline syncs once, and the merge
-    /// still compares against what the server last confirmed.
+    /// Merges with a queued operation for the same record: keeps the latest payload but the
+    /// original base snapshot, so five offline edits sync as one.
     private func enqueue(_ w: RecordWrite, in context: NSManagedObjectContext) throws {
         let request = NSFetchRequest<NSManagedObject>(entityName: E.operation)
         request.predicate = NSPredicate(format: "recordID == %@", w.recordID as CVarArg)

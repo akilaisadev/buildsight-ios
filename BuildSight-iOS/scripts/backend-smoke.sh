@@ -1,12 +1,11 @@
 #!/bin/zsh
-# Live check of a Supabase project against what the app expects.
-# Read-only except for one write the server must REFUSE, so it leaves no rows behind.
+# Checks a Supabase project against what the app expects. Read-only apart from one write
+# the server must refuse, so nothing is left behind.
 #
 #   BS_EMAIL=you@example.com BS_PASSWORD='…' scripts/backend-smoke.sh
 #
-# Uses the URL and publishable key from Config/Secrets.xcconfig. Your password is
-# read from the environment, sent only to your own project's auth endpoint, and
-# never written to disk.
+# Uses the URL and key from Config/. Your password comes from the environment and is only
+# sent to your own project.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 URL=$(grep BACKEND_URL Config/Secrets.xcconfig | sed 's/.*= *//; s|https:/\$()/|https://|')

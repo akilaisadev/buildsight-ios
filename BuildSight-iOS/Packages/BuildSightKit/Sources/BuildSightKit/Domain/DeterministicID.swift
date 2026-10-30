@@ -1,10 +1,8 @@
 import Foundation
 import CryptoKit
 
-/// Stable UUIDs derived from another id. Used where "the same input must map to
-/// the same row" is the whole point: the safety issue and analysis for a photo
-/// are keyed by the photo, so re-analysing or syncing from two devices upserts
-/// the same rows instead of creating duplicates.
+/// Stable UUIDs derived from another id, so re-analysing or syncing from two devices
+/// updates the same rows instead of duplicating them.
 public enum DeterministicID {
     public static func make(namespace: String, from source: UUID) -> UUID {
         let digest = SHA256.hash(data: Data("buildsight.\(namespace).\(source.uuidString)".utf8))

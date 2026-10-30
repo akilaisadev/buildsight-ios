@@ -185,7 +185,7 @@ private struct ResultStep: View {
                             Text(equipment.summary).font(.subheadline)
                             Text("Vests and gloves are reported only when seen. A photo with none says nothing about whether they were worn.").font(.caption).foregroundStyle(Theme.secondaryText)
                         }
-                        if let ms = outcome.analysis.inferenceMilliseconds { Text("Analysed on this device in \(Int(ms)) ms · model \(outcome.analysis.modelIdentifier)").font(.caption).foregroundStyle(Theme.secondaryText) }
+                        if let ms = outcome.analysis.inferenceMilliseconds { Text("Analysed on this device in \(Int(ms)) ms").font(.caption).foregroundStyle(Theme.secondaryText) }
                     }
                 }
                 if let issue = outcome.issue {

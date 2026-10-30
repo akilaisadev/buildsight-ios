@@ -2,11 +2,8 @@ import Foundation
 import LocalAuthentication
 import BuildSightKit
 
-/// Face ID / Touch ID via LocalAuthentication.
-///
-/// Uses `.deviceOwnerAuthenticationWithBiometrics` (no passcode fallback inside
-/// the prompt) so a lockout is reported to the app, which then requires the
-/// ACCOUNT password; the device passcode must not unlock the backend session.
+/// Face ID / Touch ID. No passcode fallback: if biometrics lock out, the account password
+/// is needed, because the device passcode must not unlock the backend session.
 struct BiometricService: BiometricAuthenticating {
     func availability() -> BiometricAvailability {
         let context = LAContext()

@@ -1,9 +1,7 @@
 import Foundation
 
-/// One JSON convention for local payloads, queued operations and server
-/// bodies: ISO-8601 timestamps with fractional seconds. Plain `.iso8601` would
-/// silently drop milliseconds, so a record would not round-trip equal and
-/// conflict detection would see phantom changes.
+/// One JSON format for local payloads, queued operations and server bodies: ISO-8601 with
+/// fractional seconds. Plain `.iso8601` drops milliseconds and would show fake conflicts.
 public enum RecordCodec {
     // ISO8601DateFormatter is documented thread-safe for formatting and parsing.
     private nonisolated(unsafe) static let formatter: ISO8601DateFormatter = {
