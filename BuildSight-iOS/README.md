@@ -55,9 +55,9 @@ The app talks to a hosted Supabase project, so nothing has to be installed or cr
 
 ## Helmet model
 
-`ML/models/` holds a Core ML conversion of `keremberke/yolov8n-hard-hat-detection` (classes `Hardhat`, `NO-Hardhat`). **Its licence is unresolved** (it is included for coursework only; do not publish or redistribute it) (see [docs/HELMET_MODEL_FEASIBILITY.md](docs/HELMET_MODEL_FEASIBILITY.md)). **Accuracy has not been measured**: no evaluation images have been run. Without the model the app builds and reports "no helmet model installed".
+`ML/models/` holds the Core ML models. `HelmetDetector` (helmet-only) decides whether a head has a helmet; `PPEDetector` / `PPEDetectorV2` report the vests and gloves they can see. The app combines them on the phone (`CompositeHelmetAnalyzer`), and a person always reviews a flag before it counts. **The licences of the model weights are unresolved**, so they are included for coursework only and must not be published or redistributed (see [docs/HELMET_MODEL_FEASIBILITY.md](docs/HELMET_MODEL_FEASIBILITY.md)).
 
-Scope is **helmets only**. Vests, harnesses and gloves from the proposal are future work.
+Accuracy can be scored on labelled photos with `ML/eval/helmet_recall.py`. The models may have seen similar pictures in training, so accuracy on a real site could be lower than the test photos show. Without the models the app still builds and says "no helmet model installed".
 
 ## Features
 
