@@ -93,6 +93,7 @@ struct SettingsView: View {
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     @State private var biometricMessage: String?
     @State private var confirmSignOut: SignOutDecision?
+    @State private var askSignOut = false
     @State private var showSyncCenter = false
     @AppStorage(AppearanceSetting.key) private var appearanceRaw = "system"
     @AppStorage("geofence.enabled") private var geofenceOn = true
@@ -152,11 +153,15 @@ struct SettingsView: View {
                 if let d = context.workspace.analyzerDescriptor { LabeledContent("Helmet model", value: "\(d.identifier) \(d.version)") }
                 else { Text("No helmet model is installed in this build. Photos are still saved; analysis is unavailable.").font(.footnote).foregroundStyle(Theme.secondaryText) }
             }
-            Section { Button("Sign Out", role: .destructive) { Task { await requestSignOut() } } }
+            Section { Button("Sign Out", role: .destructive) { askSignOut = true } }
         }
         .navigationTitle("Settings")
         .onChange(of: prefs) { _, new in Preferences.notificationPreferences = new; Task { await context.sync.refreshDerivedState() } }
         .task { await refresh() }
+        .alert("Sign out of BuildSight?", isPresented: $askSignOut) {
+            Button("Cancel", role: .cancel) {}
+            Button("Sign Out", role: .destructive) { Task { await requestSignOut() } }
+        } message: { Text("You will need to sign in again to use the app.") }
         .confirmationDialog("Sign out with unsynced work?", isPresented: Binding(get: { confirmSignOut != nil }, set: { if !$0 { confirmSignOut = nil } }), titleVisibility: .visible) {
             Button("Sync First") { Task { await context.sync.syncNow(); await requestSignOut() } }
             Button("Sign Out and Keep Changes on This Device", role: .destructive) { Task { await finishSignOut() } }

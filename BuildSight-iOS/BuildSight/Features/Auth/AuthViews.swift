@@ -151,6 +151,7 @@ struct PasswordResetView: View {
 
 /// Shown while a valid session is behind Face ID / Touch ID.
 struct LockView: View {
+    @State private var askSignOut = false
     let profile: UserProfile
     @EnvironmentObject private var environment: AppEnvironment
     @State private var message: String?
@@ -180,10 +181,14 @@ struct LockView: View {
             } else {
                 Button("Unlock") { Task { await unlock() } }.buttonStyle(PrimaryButtonStyle())
             }
-            Button("Sign Out") { Task { await environment.session.signOut() } }.frame(minHeight: Glove.target)
+            Button("Sign Out") { askSignOut = true }.frame(minHeight: Glove.target)
         }
         .padding(32).frame(maxWidth: 420).frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.background)
         .task { await unlock() }
+        .alert("Sign out of BuildSight?", isPresented: $askSignOut) {
+            Button("Cancel", role: .cancel) {}
+            Button("Sign Out", role: .destructive) { Task { await environment.session.signOut() } }
+        } message: { Text("You will need to sign in again to use the app.") }
     }
 
     private func unlock() async {
@@ -198,6 +203,7 @@ struct LockView: View {
 }
 
 struct ProjectPickerView: View {
+    @State private var askSignOut = false
     @ObservedObject var workspace: Workspace
     @ObservedObject private var sync: SyncCoordinator
     @EnvironmentObject private var environment: AppEnvironment
@@ -242,12 +248,16 @@ struct ProjectPickerView: View {
                         .disabled(sync.isSyncing)
                     Menu {
                         Text(workspace.profile.email)
-                        Button("Sign Out", role: .destructive) { Task { await environment.session.signOut() } }
+                        Button("Sign Out", role: .destructive) { askSignOut = true }
                     } label: { Label("Account", systemImage: "person.crop.circle") }
                 }
             }
             .refreshable { await refresh() }
             .task { await refresh() }
+            .alert("Sign out of BuildSight?", isPresented: $askSignOut) {
+            Button("Cancel", role: .cancel) {}
+            Button("Sign Out", role: .destructive) { Task { await environment.session.signOut() } }
+        } message: { Text("You will need to sign in again to use the app.") }
         }
     }
 
