@@ -14,7 +14,6 @@ Construction-site field evidence: every photo, issue, inspection and task carrie
 
 ## Not in this repository
 
-- Secrets (`Config/Secrets.xcconfig`) and the Core ML model weights (`ML/models/*.mlpackage`). Both are git-ignored on purpose.
-- The model's licence is unresolved (AGPL-3.0 training data and code), so the weights are not redistributed here.
+- Your own signing settings (`Config/Signing.xcconfig`) and any private override of the backend settings (`Config/Secrets.xcconfig`). Both are git-ignored on purpose.
 
 See [`BuildSight-iOS/docs/KNOWN_LIMITATIONS.md`](BuildSight-iOS/docs/KNOWN_LIMITATIONS.md) for what has been verified and what has not.

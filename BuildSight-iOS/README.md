@@ -38,12 +38,12 @@ View (SwiftUI)  →  ViewModel (@Observable, @MainActor)  →  Repository / Work
 3. **Simulator:** pick an iPhone or iPad simulator and press Cmd+R. No signing needed.
 4. **Real iPhone or iPad:** run `./scripts/setup_signing.sh` once. It writes `Config/Signing.xcconfig` (git-ignored) with your team ID and a bundle id unique to you (`com.buildsight.<your account name>`), so Apple never says the bundle id or app group is "not available". If it cannot find your team, pass it: `./scripts/setup_signing.sh YOURTEAMID` (Xcode > Settings > Accounts). Do **not** type a bundle id into Xcode's Signing screen; the config file owns it. Then use the **BuildSight** scheme (not BuildSightWidgets), select the device, press Cmd+R, and trust your developer profile on the device (Settings > General > VPN & Device Management; also enable Developer Mode).
    - Already hit "Application Group ... is not available"? `git checkout -- BuildSight.xcodeproj && git pull`, run the script above, then Product > Clean Build Folder.
-5. **Helmet model (optional):** put `PPEDetector.mlpackage` (and optionally `HelmetDetector.mlpackage`) in `ML/models/` and build. A build phase (`scripts/bundle_models.sh`) compiles them into the app; without them the app still works and Settings says no model is installed. Never commit them (licence).
+5. **Helmet model:** `ML/models/PPEDetector.mlpackage` (and the helmet-only `HelmetDetector.mlpackage`) are committed, and a build phase (`scripts/bundle_models.sh`) compiles them into the app, so every build includes them. If a build ever says "No helmet model is installed", the folder is missing them: `git pull`, or `git checkout -- ML/models`.
 6. Backend setup from scratch: [docs/BACKEND_SETUP.md](docs/BACKEND_SETUP.md). Tests: `cd Packages/BuildSightKit && swift test`.
 
 ## Helmet model
 
-`ML/models/` holds a Core ML conversion of `keremberke/yolov8n-hard-hat-detection` (classes `Hardhat`, `NO-Hardhat`). **Its licence is unresolved**, so it is git-ignored and must not be redistributed until you decide it is acceptable (see [docs/HELMET_MODEL_FEASIBILITY.md](docs/HELMET_MODEL_FEASIBILITY.md)). **Accuracy has not been measured**: no evaluation images have been run. Without the model the app builds and reports "no helmet model installed".
+`ML/models/` holds a Core ML conversion of `keremberke/yolov8n-hard-hat-detection` (classes `Hardhat`, `NO-Hardhat`). **Its licence is unresolved** (it is included for coursework only; do not publish or redistribute it) (see [docs/HELMET_MODEL_FEASIBILITY.md](docs/HELMET_MODEL_FEASIBILITY.md)). **Accuracy has not been measured**: no evaluation images have been run. Without the model the app builds and reports "no helmet model installed".
 
 Scope is **helmets only**. Vests, harnesses and gloves from the proposal are future work.
 

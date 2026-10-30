@@ -1,6 +1,5 @@
 Config/Secrets.xcconfig
 .DS_Store
-ML/models/*.mlpackage
 
 .project.generated.yml
 xcuserdata/
