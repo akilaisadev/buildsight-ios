@@ -1,4 +1,4 @@
-// Copy to Signing.xcconfig (git-ignored) to run on a real iPhone.
+// Easiest: run ./scripts/setup_signing.sh (it writes this file for you). Or copy this to Signing.xcconfig (git-ignored).
 // Your Apple Developer team ID: Xcode > Settings > Accounts > your team, or developer.apple.com > Membership.
 DEVELOPMENT_TEAM = ABCDE12345
 // If com.buildsight99.app is already taken, pick your own (the widget becomes <id>.widgets):
