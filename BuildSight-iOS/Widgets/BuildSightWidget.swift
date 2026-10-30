@@ -14,7 +14,7 @@ struct FlagEntry: TimelineEntry {
 }
 
 struct FlagProvider: TimelineProvider {
-    private let store = UserDefaultsWidgetSnapshotStore(suiteName: "group.com.buildsight.app")
+    private let store = UserDefaultsWidgetSnapshotStore(suiteName: Bundle.main.object(forInfoDictionaryKey: "BuildSightAppGroup") as? String ?? "group.com.buildsight99.app")
 
     func placeholder(in context: Context) -> FlagEntry {
         FlagEntry(date: Date(), snapshot: WidgetSnapshot(projectID: UUID(), projectName: "Project", generatedAt: Date(), unreviewedFlags: 0, confirmedFindings: 0, flagsToday: 0, topAreaName: nil, openCritical: 0))

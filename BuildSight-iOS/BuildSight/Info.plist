@@ -4,6 +4,8 @@
 <dict>
 	<key>BuildSightAnonKey</key>
 	<string>$(BUILDSIGHT_ANON_KEY)</string>
+	<key>BuildSightAppGroup</key>
+	<string>group.$(BUILDSIGHT_BUNDLE_ID)</string>
 	<key>BuildSightBackendURL</key>
 	<string>$(BUILDSIGHT_BACKEND_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>

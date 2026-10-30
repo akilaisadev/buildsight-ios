@@ -85,7 +85,12 @@ final class Workspace: ObservableObject {
     }
 }
 
-enum AppGroup { static let identifier = "group.com.buildsight.app" }
+/// The app group shared with the widget. It follows the bundle id (group.<bundle id>, set in
+/// Info.plist from BUILDSIGHT_BUNDLE_ID) so each developer team registers its own group; a
+/// fixed name can only belong to one team in the world.
+enum AppGroup {
+    static let identifier = Bundle.main.object(forInfoDictionaryKey: "BuildSightAppGroup") as? String ?? "group.com.buildsight99.app"
+}
 
 @MainActor
 final class AppEnvironment: ObservableObject {

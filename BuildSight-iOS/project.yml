@@ -40,10 +40,11 @@ targets:
           - CFBundleURLSchemes: [buildsight]
         BuildSightBackendURL: $(BUILDSIGHT_BACKEND_URL)
         BuildSightAnonKey: $(BUILDSIGHT_ANON_KEY)
+        BuildSightAppGroup: group.$(BUILDSIGHT_BUNDLE_ID)
     entitlements:
       path: BuildSight/BuildSight.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.buildsight.app]
+        com.apple.security.application-groups: [group.$(BUILDSIGHT_BUNDLE_ID)]
     configFiles:
       Debug: Config/App.xcconfig
       Release: Config/App.xcconfig
@@ -70,10 +71,11 @@ targets:
       properties:
         CFBundleDisplayName: BuildSight Widgets
         NSExtension: { NSExtensionPointIdentifier: com.apple.widgetkit-extension }
+        BuildSightAppGroup: group.$(BUILDSIGHT_BUNDLE_ID)
     entitlements:
       path: Widgets/Widgets.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.buildsight.app]
+        com.apple.security.application-groups: [group.$(BUILDSIGHT_BUNDLE_ID)]
     configFiles:
       Debug: Config/Widgets.xcconfig
       Release: Config/Widgets.xcconfig
