@@ -51,8 +51,14 @@ struct KeychainSessionStore: SecureSessionStore {
         #endif
     }
 
+    /// `kSecUseDataProtectionKeychain` selects the iOS-style keychain on every platform. Without it a
+    /// Mac (Catalyst) build uses the file-based login keychain, which asks for the keychain password
+    /// whenever the app's signature changes (every rebuild) and rejects a Mac login password that no
+    /// longer matches the keychain's. The data protection keychain is tied to the app's entitlements
+    /// and never prompts. (iOS already behaves this way; the flag makes macOS match.)
     private func baseQuery() -> [String: Any] {
-        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account]
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account,
+         kSecUseDataProtectionKeychain as String: true]
     }
 
     #if DEBUG && targetEnvironment(macCatalyst)
