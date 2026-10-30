@@ -68,20 +68,28 @@ final class Workspace: ObservableObject {
         sync = SyncCoordinator(engine: engine, pull: PullService(store: store, remote: backend), store: store, widget: publisher, reminders: notifications, actorProvider: { selection.actor }, projectIDs: { profile.projectIDs }, onPulled: { await selection.load() }, onAuthExpired: { session.sessionDidExpire() })
     }
 
-    private static func loadAnalyzer() -> (analyzer: CoreMLHelmetAnalyzer?, problem: String?) {
-        // Prefer the newest multi-class PPE model, then the older one, then the helmet-only model.
+    /// The helmet-only model decides helmet / no helmet (it finds missing helmets far more reliably in
+    /// our measurements); the newest multi-class model adds vests and gloves. With only one of them
+    /// present, that one is used on its own.
+    private static func loadAnalyzer() -> (analyzer: HelmetAnalyzing?, problem: String?) {
         var problem: String?
-        let candidates: [(String, HelmetModelDescriptor)] = [("PPEDetectorV2", .ppeSafetyVisionV2), ("PPEDetector", .ppeYOLOv8s), ("HelmetDetector", .candidateKeremberkeYOLOv8n)]
-        for (name, descriptor) in candidates {
-            guard let url = Bundle.main.url(forResource: name, withExtension: "mlmodelc") else { continue }
-            do {
-                return (try CoreMLHelmetAnalyzer(modelURL: url, descriptor: descriptor), problem)
-            } catch {
+        func load(_ name: String, _ descriptor: HelmetModelDescriptor) -> CoreMLHelmetAnalyzer? {
+            guard let url = Bundle.main.url(forResource: name, withExtension: "mlmodelc") else { return nil }
+            do { return try CoreMLHelmetAnalyzer(modelURL: url, descriptor: descriptor) }
+            catch {
                 problem = "\(name) is bundled but could not be loaded: \(error.localizedDescription)"
                 Logger(subsystem: "com.buildsight.app", category: "model").error("\(problem ?? "", privacy: .public)")
+                return nil
             }
         }
-        return (nil, problem)
+        let head = load("HelmetDetector", .candidateKeremberkeYOLOv8n)
+        let equipment = load("PPEDetectorV2", .ppeSafetyVisionV2) ?? load("PPEDetector", .ppeYOLOv8s)
+        switch (head, equipment) {
+        case let (head?, equipment?): return (CompositeHelmetAnalyzer(head: head, equipment: equipment), problem)
+        case let (head?, nil): return (head, problem)
+        case let (nil, equipment?): return (equipment, problem)
+        case (nil, nil): return (nil, problem)
+        }
     }
 }
 
