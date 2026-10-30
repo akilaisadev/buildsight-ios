@@ -5,3 +5,4 @@ ML/models/*.mlpackage
 .project.generated.yml
 xcuserdata/
 *.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+Packages/BuildSightKit/.build/

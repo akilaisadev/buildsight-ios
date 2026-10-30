@@ -42,7 +42,10 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>BuildSight attaches your position to photos, issues and inspections so supervisors can see where they happened.</string>
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

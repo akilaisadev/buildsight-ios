@@ -11,11 +11,12 @@ final class StubTransport: HTTPTransport, @unchecked Sendable {
     init(_ replies: [Reply]) { self.replies = replies }
 
     func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
-        lock.lock(); defer { lock.unlock() }
-        requests.append(request)
-        let r = replies.isEmpty ? Reply(status: 200, body: "{}") : replies.removeFirst()
-        if let e = r.error { throw e }
-        return (Data(r.body.utf8), HTTPURLResponse(url: request.url!, statusCode: r.status, httpVersion: nil, headerFields: nil)!)
+        try lock.withLock {
+            requests.append(request)
+            let r = replies.isEmpty ? Reply(status: 200, body: "{}") : replies.removeFirst()
+            if let e = r.error { throw e }
+            return (Data(r.body.utf8), HTTPURLResponse(url: request.url!, statusCode: r.status, httpVersion: nil, headerFields: nil)!)
+        }
     }
 }
 

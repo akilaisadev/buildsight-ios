@@ -85,7 +85,7 @@ struct PhoneShell: View {
             barItem(.home, "house.fill")
             barItem(.activity, "waveform.path.ecg")
             Button { router.showCapture = true } label: {
-                Image(systemName: "camera.fill").font(.title2.weight(.semibold)).foregroundStyle(.white)
+                Image(systemName: "camera.fill").font(.title2.weight(.semibold)).foregroundStyle(Theme.onAccent)
                     .frame(width: 74, height: 74).background(Theme.accent, in: Circle())
                     .shadow(color: Theme.accent.opacity(0.45), radius: 10, y: 4)
             }
@@ -108,7 +108,7 @@ struct PhoneShell: View {
             barItem(.home, "house.fill")
             barItem(.activity, "waveform.path.ecg")
             Button { router.showCapture = true } label: {
-                Image(systemName: "camera.fill").font(.title2.weight(.semibold)).foregroundStyle(.white)
+                Image(systemName: "camera.fill").font(.title2.weight(.semibold)).foregroundStyle(Theme.onAccent)
                     .frame(width: 66, height: 66).background(Theme.accent, in: Circle())
                     .shadow(color: Theme.accent.opacity(0.45), radius: 10, y: 4)
             }

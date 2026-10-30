@@ -89,7 +89,7 @@
 		37F4C4FC813A1E102B3D031E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		382F0BD81D57DB6FA0FACD46 /* REQUIREMENTS_MATRIX.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = REQUIREMENTS_MATRIX.md; sourceTree = "<group>"; };
 		39A2BC68D7036521E7CCD4BA /* test_schema.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = test_schema.sh; sourceTree = "<group>"; };
-		3E2CEB803BF7D7B31F138B65 /* BuildSightWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BuildSightWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E2CEB803BF7D7B31F138B65 /* BuildSightWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BuildSightWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AF705ED4C638C63521A7482 /* BACKEND_SETUP.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BACKEND_SETUP.md; sourceTree = "<group>"; };
 		5314C156E8B74EC547CAC381 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		56676EF87C57FE68600CEF3D /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
@@ -105,7 +105,7 @@
 		909599C5302FC01EF4C2272F /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		92973D955F511D485E2572A1 /* BuildSightKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildSightKit; path = Packages/BuildSightKit; sourceTree = SOURCE_ROOT; };
 		95F4A5A7CEAD7F37FD407158 /* provenance_ppe.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = provenance_ppe.json; sourceTree = "<group>"; };
-		961AE25FDEC1EBDA3827DAC2 /* BuildSight.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BuildSight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		961AE25FDEC1EBDA3827DAC2 /* BuildSight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuildSight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB0C5BDF5D509DDE1049DB67 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		B1640DF9F855D1D687E27C1C /* MainShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainShell.swift; sourceTree = "<group>"; };
 		B1F5EECD8E298507700052E6 /* train_ppe.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = train_ppe.py; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 		DCA84E37C25456F81815419C /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		DF3BFD5A7A59B63E6EED27E5 /* BuildSightWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildSightWidget.swift; sourceTree = "<group>"; };
 		E1E72E32B734F0301130D76E /* DESIGN_DECISIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DESIGN_DECISIONS.md; sourceTree = "<group>"; };
-		E3B34019B861193225820F06 /* schema.sql */ = {isa = PBXFileReference; path = schema.sql; sourceTree = "<group>"; };
+		E3B34019B861193225820F06 /* schema.sql */ = {isa = PBXFileReference; lastKnownFileType = text; path = schema.sql; sourceTree = "<group>"; };
 		EB9C4D5C0C98AC2C53863F66 /* WorkingSites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingSites.swift; sourceTree = "<group>"; };
 		ECB996C8D03F250E46D5939E /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
 		EEF6404EB331B39A44297DD4 /* CaptureFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFlowView.swift; sourceTree = "<group>"; };
@@ -491,15 +491,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-					2440816A6237B96B8228AF45 = {
-						DevelopmentTeam = "";
-					};
-					60DA303C79F76809A082C67B = {
-						DevelopmentTeam = "";
-					};
-				};
+				LastUpgradeCheck = 1620;
 			};
 			buildConfigurationList = DD2F07EB0FEAA896EB341698 /* Build configuration list for PBXProject "BuildSight" */;
 			developmentRegion = en;
@@ -633,6 +625,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -659,13 +652,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BuildSight/BuildSight.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = U25S34NL72;
 				INFOPLIST_FILE = BuildSight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -710,6 +704,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -743,13 +738,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = BuildSight/BuildSight.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = U25S34NL72;
 				INFOPLIST_FILE = BuildSight/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -760,6 +756,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Widgets/Widgets.entitlements;
+				DEVELOPMENT_TEAM = U25S34NL72;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -767,7 +764,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight.app.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app.widgets;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -778,6 +775,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Widgets/Widgets.entitlements;
+				DEVELOPMENT_TEAM = U25S34NL72;
 				INFOPLIST_FILE = Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -785,7 +783,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight.app.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildsight99.app.widgets;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -834,10 +832,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		5CD58CC0275F2C6933CD537A /* BuildSightKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 26BA7E1D35E7843F15B46EF7 /* XCLocalSwiftPackageReference "Packages/BuildSightKit" */;
 			productName = BuildSightKit;
 		};
 		BAA5B72550E6161D168CD603 /* BuildSightKit */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 26BA7E1D35E7843F15B46EF7 /* XCLocalSwiftPackageReference "Packages/BuildSightKit" */;
 			productName = BuildSightKit;
 		};
 /* End XCSwiftPackageProductDependency section */

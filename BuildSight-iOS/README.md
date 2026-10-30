@@ -4,7 +4,7 @@ Construction-site field intelligence: every photo, issue, inspection and task ca
 
 The React prototype in the repository root is untouched. This directory is the native SwiftUI app.
 
-> **Status: written and logic-verified, not yet built in Xcode.** The machine this was developed on has only the Command Line Tools (no Xcode, no iOS SDK, no simulator). See [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md) for exactly what is and is not verified.
+> **Status: simulator build and launch verified.** The iOS app builds with Xcode 16.2, launches on an iPhone 16 simulator, and the shared package passes 151 tests. Device hardware and signed-in workflows still need hands-on verification. See [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).
 
 ## Layout
 

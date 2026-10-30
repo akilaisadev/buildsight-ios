@@ -23,8 +23,7 @@ struct SignInView: View {
                         LinearGradient(colors: [.black.opacity(0.85), .black.opacity(0.25)], startPoint: .bottom, endPoint: .top)
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 10) {
-                                RoundedRectangle(cornerRadius: 9, style: .continuous).fill(Theme.accent).frame(width: 36, height: 36)
-                                    .overlay(Image(systemName: "hard.hat.fill").foregroundStyle(.white))
+                                BrandMark().frame(width: 36, height: 36)
                                 Text("BuildSight").font(.system(size: 28, weight: .bold)).foregroundStyle(.white)
                             }
                             Text("Capture the site. Know the story.").font(.body.weight(.semibold)).foregroundStyle(.white.opacity(0.85))

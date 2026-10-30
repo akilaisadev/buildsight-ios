@@ -5,6 +5,7 @@ import BuildSightKit
 /// lock covers the app whenever the session is `.locked`.
 struct RootView: View {
     @EnvironmentObject private var environment: AppEnvironment
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var launchFinished = false
 
     var body: some View {
@@ -29,11 +30,9 @@ struct RootView: View {
         }
         .animation(.default, value: environment.session.state)
         .onChange(of: environment.session.state) { _, _ in environment.rebuildWorkspace() }
-        // Keep the launch animation on screen for its full length (about 5 s), even if the session restores sooner.
         .onAppear {
-            // A plain timer, not a .task: a cancelled task would end the animation early.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.2) {
-                withAnimation(.easeInOut(duration: 0.5)) { launchFinished = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + (reduceMotion ? 0.1 : 1.7)) {
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) { launchFinished = true }
             }
         }
     }

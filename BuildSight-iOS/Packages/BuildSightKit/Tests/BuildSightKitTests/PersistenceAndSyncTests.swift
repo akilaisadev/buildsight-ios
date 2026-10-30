@@ -14,20 +14,22 @@ final class FakeBackend: RemoteBackend, @unchecked Sendable {
     init(_ script: [Step]) { self.script = script }
 
     func upsert(_ operation: PendingOperation, objectPath: String?) async throws -> RemoteAck {
-        lock.lock(); defer { lock.unlock() }
-        upserts.append(operation)
-        let step = script.isEmpty ? .ok(1) : script.removeFirst()
-        switch step {
-        case .ok(let v): return RemoteAck(serverVersion: v)
-        case .fail(let e): throw e
+        try lock.withLock {
+            upserts.append(operation)
+            let step = script.isEmpty ? .ok(1) : script.removeFirst()
+            switch step {
+            case .ok(let v): return RemoteAck(serverVersion: v)
+            case .fail(let e): throw e
+            }
         }
     }
 
     func uploadEvidence(projectID: UUID, photoID: UUID, localFilename: String) async throws -> String {
-        lock.lock(); defer { lock.unlock() }
-        if uploadFailures > 0 { uploadFailures -= 1; throw RemoteError.transient("upload dropped") }
-        uploads.append(photoID)
-        return "\(projectID)/\(photoID).jpg"
+        try lock.withLock {
+            if uploadFailures > 0 { uploadFailures -= 1; throw RemoteError.transient("upload dropped") }
+            uploads.append(photoID)
+            return "\(projectID)/\(photoID).jpg"
+        }
     }
 }
 

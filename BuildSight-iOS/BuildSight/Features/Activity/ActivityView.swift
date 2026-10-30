@@ -4,15 +4,16 @@ import BuildSightKit
 struct TimelineRow: View {
     let event: TimelineEvent
     let snapshot: ProjectSnapshot
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appeared = false
+
     var body: some View {
         HStack(alignment: .center, spacing: 14) {
-            // Thumbnail tile with the record's icon (the Figma uses the photo when there is one).
             ZStack {
-                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Theme.surface)
-                Image(systemName: Self.symbol(event.ref.kind)).font(.title2).foregroundStyle(Theme.secondaryText)
+                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Theme.accent.opacity(0.13))
+                Image(systemName: Self.symbol(event.ref.kind)).font(.title2.weight(.semibold)).foregroundStyle(Theme.accentText)
             }
-            .frame(width: 64, height: 64)
-            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.1), lineWidth: 1))
+            .frame(width: 56, height: 56)
             .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .firstTextBaseline) {
@@ -22,10 +23,22 @@ struct TimelineRow: View {
                     Text(formatted(event.at, style: .dateTime.hour().minute())).font(.caption.weight(.semibold)).foregroundStyle(Theme.secondaryText)
                 }
                 Text(event.title).font(.body.weight(.semibold)).foregroundStyle(Theme.text).lineLimit(2)
-                Label(snapshot.areaName(event.areaID), systemImage: "mappin").font(.footnote).foregroundStyle(Theme.secondaryText)
+                HStack(spacing: 8) {
+                    Label(snapshot.areaName(event.areaID), systemImage: "mappin")
+                    Text("·")
+                    Text(event.statusLabel)
+                }
+                .font(.footnote).foregroundStyle(Theme.secondaryText).lineLimit(1)
             }
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
+        .opacity(appeared || reduceMotion ? 1 : 0)
+        .offset(y: appeared || reduceMotion ? 0 : 10)
+        .onAppear {
+            guard !appeared else { return }
+            if reduceMotion { appeared = true }
+            else { withAnimation(.easeOut(duration: 0.28)) { appeared = true } }
+        }
         .accessibilityElement(children: .combine)
     }
     static func symbol(_ k: TimelineKind) -> String {
@@ -46,6 +59,7 @@ extension RecordRef {
 
 struct ActivityView: View {
     @EnvironmentObject private var context: ScreenContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var model = TimelineViewModel()
     @State private var showFilters = false
 
@@ -54,6 +68,26 @@ struct ActivityView: View {
             if let s = context.data.snapshot {
                 let sections = model.sections(for: s)
                 List {
+                    Section {
+                        HStack(spacing: 14) {
+                            Image(systemName: "waveform.path.ecg.rectangle")
+                                .font(.title2.weight(.semibold))
+                                .foregroundStyle(Theme.onAccent)
+                                .frame(width: 56, height: 56)
+                                .background(Theme.accent, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("SITE ACTIVITY").font(.caption.weight(.bold)).tracking(1.2).foregroundStyle(Theme.accentText)
+                                Text("\(sections.reduce(0) { $0 + $1.events.count }) records")
+                                    .font(.title2.bold()).foregroundStyle(Theme.text)
+                                Text(model.filter.isActive ? "Showing filtered records" : "Your site's latest updates")
+                                    .font(.subheadline).foregroundStyle(Theme.secondaryText)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                     Section {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 10) {
@@ -76,10 +110,20 @@ struct ActivityView: View {
                     }
                     ForEach(sections) { section in
                         Section {
-                            ForEach(section.events) { e in NavigationLink(value: e.ref.route) { TimelineRow(event: e, snapshot: s) } }
-                        } header: { Text(section.day, format: .dateTime.weekday(.wide).day().month(.wide)).accessibilityAddTraits(.isHeader) }
+                            ForEach(section.events) { e in
+                                NavigationLink(value: e.ref.route) { TimelineRow(event: e, snapshot: s) }
+                                    .listRowBackground(Theme.surface)
+                            }
+                        } header: {
+                            Text(section.day, format: .dateTime.weekday(.wide).day().month(.wide))
+                                .font(.subheadline.bold()).foregroundStyle(Theme.text)
+                                .accessibilityAddTraits(.isHeader)
+                        }
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(Theme.background)
+                .animation(reduceMotion ? nil : .snappy(duration: 0.28), value: model.filter)
             } else { ProgressView() }
         }
         .navigationTitle("Site Log")
@@ -97,7 +141,7 @@ extension ActivityView {
     /// One-tap filter chip. Large enough for gloved hands; the selected chip is high-contrast.
     func kindChip(_ title: String, _ symbol: String, kinds: Set<TimelineKind>) -> some View {
         let selected = model.filter.kinds == kinds
-        return Button { model.filter.kinds = kinds } label: {
+        return Button { withAnimation(reduceMotion ? nil : .snappy(duration: 0.25)) { model.filter.kinds = kinds } } label: {
             Label(title, systemImage: symbol)
                 .font(.headline)
                 .padding(.horizontal, 18)
@@ -133,7 +177,15 @@ struct TimelineFilterSheet: View {
                 }
                 Section("Record type") {
                     ForEach(TimelineKind.allCases, id: \.self) { kind in
-                        Toggle(kind.displayName, isOn: Binding(get: { model.filter.kinds.contains(kind) }, set: { on in if on { model.filter.kinds.insert(kind) } else { model.filter.kinds.remove(kind) } }))
+                        Toggle(kind.displayName, isOn: Binding(
+                            get: { model.filter.kinds.isEmpty || model.filter.kinds.contains(kind) },
+                            set: { on in
+                                if on { model.filter.kinds.insert(kind) }
+                                else if model.filter.kinds.isEmpty { model.filter.kinds = Set(TimelineKind.allCases).subtracting([kind]) }
+                                else { model.filter.kinds.remove(kind) }
+                                if model.filter.kinds.count == TimelineKind.allCases.count { model.filter.kinds = [] }
+                            }
+                        ))
                     }
                 }
                 if let s = context.data.snapshot {
@@ -150,12 +202,23 @@ struct TimelineFilterSheet: View {
                 Section { Button("Clear All Filters", role: .destructive) { model.clear(); useRange = false } }
             }
             .navigationTitle("Filters").inlineNavigationTitle()
+            .onAppear {
+                if let range = model.filter.dateRange {
+                    from = range.lowerBound
+                    to = range.upperBound
+                    useRange = true
+                }
+            }
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") {
-                if useRange, let end = Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: to)) { model.filter.dateRange = Calendar.current.startOfDay(for: from)...end.addingTimeInterval(-1) }
-                else if !useRange, model.filter.dateRange != nil, !isTodayRange { model.filter.dateRange = nil }
+                if useRange {
+                    let start = Calendar.current.startOfDay(for: min(from, to))
+                    let last = Calendar.current.startOfDay(for: max(from, to))
+                    if let end = Calendar.current.date(byAdding: .day, value: 1, to: last) {
+                        model.filter.dateRange = start...end.addingTimeInterval(-1)
+                    }
+                } else { model.filter.dateRange = nil }
                 dismiss()
             } } }
         }
     }
-    private var isTodayRange: Bool { model.filter.dateRange.map { Calendar.current.isDateInToday($0.lowerBound) } ?? false }
 }

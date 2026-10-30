@@ -1,174 +1,126 @@
 import SwiftUI
 
-/// Launch animation: a building goes up floor by floor while a crane sets each one,
-/// the windows light up, a flag goes on top and the brand fades in. Adapts to Light
-/// and Dark (night) appearance, and respects Reduce Motion (shows the finished scene).
+/// One architectural mark for the icon, launch screen and sign-in screen.
+struct BrandMark: View {
+    var reveal: CGFloat = 1
+    var illuminated = true
+
+    var body: some View {
+        GeometryReader { geometry in
+            let side = min(geometry.size.width, geometry.size.height)
+            ZStack {
+                RoundedRectangle(cornerRadius: side * 0.225, style: .continuous)
+                    .fill(LinearGradient(colors: [Color(hex: 0x2B3440), Color(hex: 0x10161D)], startPoint: .topLeading, endPoint: .bottomTrailing))
+
+                building(in: side)
+                    .mask {
+                        Rectangle()
+                            .frame(width: side, height: side * reveal)
+                            .offset(y: side * (1 - reveal) / 2)
+                    }
+
+                if reveal > 0 && reveal < 1 {
+                    Rectangle().fill(Theme.accent)
+                        .frame(width: side * 0.57, height: max(2, side * 0.013))
+                        .shadow(color: Theme.accent.opacity(0.8), radius: side * 0.035)
+                        .position(x: side * 0.52, y: side * (0.81 - 0.60 * reveal))
+                }
+            }
+            .frame(width: side, height: side)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private func building(in side: CGFloat) -> some View {
+        ZStack {
+            Path { path in
+                path.move(to: point(0.25, 0.29, side))
+                path.addLine(to: point(0.39, 0.20, side))
+                path.addLine(to: point(0.80, 0.20, side))
+                path.addLine(to: point(0.66, 0.29, side))
+                path.closeSubpath()
+            }
+            .fill(LinearGradient(colors: [Theme.accent, Color(hex: 0xFF9B45)], startPoint: .leading, endPoint: .trailing))
+
+            Path { path in
+                path.move(to: point(0.66, 0.29, side))
+                path.addLine(to: point(0.80, 0.20, side))
+                path.addLine(to: point(0.80, 0.72, side))
+                path.addLine(to: point(0.66, 0.81, side))
+                path.closeSubpath()
+            }
+            .fill(Color(hex: 0x26343E))
+
+            Rectangle()
+                .fill(LinearGradient(colors: [Color(hex: 0x495A66), Color(hex: 0x273640)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: side * 0.41, height: side * 0.52)
+                .position(x: side * 0.455, y: side * 0.55)
+
+            ForEach(0..<4, id: \.self) { floor in
+                let y = side * (0.355 + CGFloat(floor) * 0.137)
+                Path { path in
+                    path.move(to: CGPoint(x: side * 0.25, y: y))
+                    path.addLine(to: CGPoint(x: side * 0.66, y: y))
+                    path.addLine(to: CGPoint(x: side * 0.80, y: y - side * 0.09))
+                }
+                .stroke(Color(hex: 0xE7EDF0), style: StrokeStyle(lineWidth: side * 0.018, lineCap: .square, lineJoin: .miter))
+            }
+
+            ForEach(0..<3, id: \.self) { row in
+                ForEach(0..<3, id: \.self) { column in
+                    let isLit = illuminated && ((row == 0 && column == 2) || (row == 2 && column == 0))
+                    RoundedRectangle(cornerRadius: side * 0.006, style: .continuous)
+                        .fill(isLit ? Theme.accent : Color(hex: 0x15232D))
+                        .frame(width: side * 0.068, height: side * 0.075)
+                        .position(x: side * (0.325 + CGFloat(column) * 0.113), y: side * (0.407 + CGFloat(row) * 0.137))
+                }
+            }
+
+            Path { path in
+                path.move(to: point(0.25, 0.29, side))
+                path.addLine(to: point(0.25, 0.81, side))
+                path.addLine(to: point(0.66, 0.81, side))
+                path.addLine(to: point(0.80, 0.72, side))
+            }
+            .stroke(Color(hex: 0xE7EDF0), style: StrokeStyle(lineWidth: side * 0.013, lineCap: .square, lineJoin: .miter))
+        }
+    }
+
+    private func point(_ x: CGFloat, _ y: CGFloat, _ side: CGFloat) -> CGPoint {
+        CGPoint(x: x * side, y: y * side)
+    }
+}
+
 struct LaunchBuildingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    static let floorCount = 5
-    private let floorHeight: CGFloat = 24
-    private let floorGap: CGFloat = 5
-    private let groundY: CGFloat = 232
-    private let buildingX: CGFloat = 112
-    private let buildingWidth: CGFloat = 112
-    private let craneX: CGFloat = 206
-    private let craneTopY: CGFloat = 34
-
-    @State private var ground: CGFloat = 0
-    @State private var mast: CGFloat = 0
-    @State private var jib = false
-    @State private var placed = [Bool](repeating: false, count: LaunchBuildingView.floorCount)
-    @State private var lit = [Bool](repeating: false, count: LaunchBuildingView.floorCount)
-    @State private var flag = false
-    @State private var sway = false
-    @State private var brand = false
-    @State private var focus = false     // viewfinder brackets snap onto the building
-    @State private var scan: CGFloat = 0  // scan line position, 0 (top) to 1 (bottom)
-    @State private var verified = false
-
-    private var floorColor: Color { Color(light: 0xB9B9C0, dark: 0x3A3A3C) }
-    private var windowLit: Color { Color(light: 0x6E9BC9, dark: 0xFFC857) }     // night: warm lit windows
-    private var windowOff: Color { Color(light: 0x9C9CA3, dark: 0x2A2A2D) }
+    @State private var reveal: CGFloat = 0
+    @State private var illuminated = false
+    @State private var showTitle = false
 
     var body: some View {
         ZStack {
-            Theme.background.ignoresSafeArea()
-            VStack(spacing: 26) {
-                scene.frame(width: 280, height: 270)
-                    .overlay { viewfinder }
-                VStack(spacing: 6) {
-                    Text("BuildSight").font(.largeTitle.bold()).foregroundStyle(Theme.text)
-                    Text("Capture the site. Know the story.").font(.subheadline).foregroundStyle(Theme.secondaryText)
+            Color(hex: 0x10161D).ignoresSafeArea()
+            VStack(spacing: 24) {
+                BrandMark(reveal: reveal, illuminated: illuminated)
+                    .frame(width: 124, height: 124)
+                    .shadow(color: Color.black.opacity(0.22), radius: 26, y: 12)
+                VStack(spacing: 5) {
+                    Text("BuildSight").font(.system(size: 31, weight: .bold, design: .rounded)).foregroundStyle(.white)
+                    Text("A clearer view of every site.").font(.subheadline).foregroundStyle(Color(hex: 0xAEB8C2))
                 }
-                .opacity(brand ? 1 : 0)
-                .offset(y: brand ? 0 : 14)
+                .opacity(showTitle ? 1 : 0)
+                .offset(y: showTitle ? 0 : 8)
             }
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Loading BuildSight")
-        .onAppear(perform: start)
-    }
-
-    /// Camera viewfinder that locks onto the finished building, sweeps a scan line
-    /// over it and shows a check: the app's "capture and check" idea in one beat.
-    private var viewfinder: some View {
-        ZStack {
-            ForEach(0..<4, id: \.self) { corner in
-                BracketCorner()
-                    .stroke(Theme.accent, style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                    .frame(width: 34, height: 34)
-                    .rotationEffect(.degrees(Double(corner) * 90))
-                    .offset(x: (corner == 0 || corner == 3 ? -1 : 1) * (focus ? 118 : 150),
-                            y: (corner < 2 ? -1 : 1) * (focus ? 118 : 150))
+        .onAppear {
+            if reduceMotion { reveal = 1; illuminated = true; showTitle = true }
+            else {
+                withAnimation(.easeOut(duration: 0.85)) { reveal = 1 }
+                withAnimation(.easeOut(duration: 0.35).delay(0.48)) { showTitle = true }
+                withAnimation(.easeInOut(duration: 0.28).delay(0.67)) { illuminated = true }
             }
-            .opacity(focus ? 1 : 0)
-            LinearGradient(colors: [Theme.accent.opacity(0), Theme.accent.opacity(0.55)], startPoint: .top, endPoint: .bottom)
-                .frame(width: 236, height: 26)
-                .overlay(alignment: .bottom) { Rectangle().fill(Theme.accent).frame(height: 2) }
-                .offset(y: -118 + scan * 236)
-                .opacity(scan > 0 && scan < 1 ? 1 : 0)
-            Image(systemName: "checkmark.seal.fill")
-                .font(.system(size: 40)).foregroundStyle(.white, Color(hex: 0x34C759))
-                .offset(x: 104, y: 92)
-                .scaleEffect(verified ? 1 : 0.2)
-                .opacity(verified ? 1 : 0)
         }
-        .allowsHitTesting(false)
-    }
-
-    private var scene: some View {
-        ZStack {
-            // Ground line draws in from the left.
-            Path { p in p.move(to: CGPoint(x: 0, y: groundY)); p.addLine(to: CGPoint(x: 280, y: groundY)) }
-                .trim(from: 0, to: ground)
-                .stroke(Theme.text.opacity(0.35), style: StrokeStyle(lineWidth: 2, lineCap: .round))
-
-            // Floors: each one drops in from above and settles with a spring.
-            ForEach(0..<Self.floorCount, id: \.self) { i in
-                let top = groundY - CGFloat(i + 1) * (floorHeight + floorGap)
-                VStack(spacing: 6) {
-                    HStack(spacing: 9) {
-                        ForEach(0..<4, id: \.self) { _ in
-                            RoundedRectangle(cornerRadius: 2).fill(lit[i] ? windowLit : windowOff).frame(width: 13, height: 11)
-                        }
-                    }
-                }
-                .frame(width: buildingWidth, height: floorHeight)
-                .background(floorColor, in: RoundedRectangle(cornerRadius: 4, style: .continuous))
-                .position(x: buildingX, y: top + floorHeight / 2)
-                .offset(y: placed[i] ? 0 : -190)
-                .opacity(placed[i] ? 1 : 0)
-            }
-
-            // Flag on the roof.
-            let roofY = groundY - CGFloat(Self.floorCount) * (floorHeight + floorGap)
-            Path { p in
-                p.move(to: CGPoint(x: buildingX, y: roofY))
-                p.addLine(to: CGPoint(x: buildingX, y: roofY - 38))
-            }
-            .stroke(Theme.text.opacity(0.6), lineWidth: 2)
-            Path { p in
-                p.move(to: CGPoint(x: buildingX, y: roofY - 38))
-                p.addLine(to: CGPoint(x: buildingX + 26, y: roofY - 31))
-                p.addLine(to: CGPoint(x: buildingX, y: roofY - 24))
-                p.closeSubpath()
-            }
-            .fill(Theme.accent)
-            .opacity(flag ? 1 : 0)
-            .offset(y: flag ? 0 : 8)
-
-            // Crane: mast rises, then the jib swings in and the hook sways.
-            Rectangle().fill(Theme.text.opacity(0.55))
-                .frame(width: 7, height: groundY - craneTopY)
-                .position(x: craneX, y: (groundY + craneTopY) / 2)
-                .scaleEffect(y: mast, anchor: .bottom)
-            Rectangle().fill(Theme.text.opacity(0.55))
-                .frame(width: 150, height: 7)
-                .position(x: craneX - 40, y: craneTopY)
-                .scaleEffect(x: jib ? 1 : 0.2, anchor: .trailing)
-                .opacity(jib ? 1 : 0)
-            Rectangle().fill(Theme.text.opacity(0.5))
-                .frame(width: 1.5, height: 46)
-                .position(x: craneX - 90, y: craneTopY + 23)
-                .offset(x: sway ? 3 : -3)
-                .opacity(jib ? 1 : 0)
-            RoundedRectangle(cornerRadius: 2).fill(Theme.accent)
-                .frame(width: 10, height: 8)
-                .position(x: craneX - 90, y: craneTopY + 48)
-                .offset(x: sway ? 3 : -3)
-                .opacity(jib ? 1 : 0)
-        }
-    }
-
-    private func start() {
-        if reduceMotion {
-            ground = 1; mast = 1; jib = true; flag = true; brand = true; focus = true; verified = true
-            for i in 0..<Self.floorCount { placed[i] = true; lit[i] = true }
-            return
-        }
-        withAnimation(.easeOut(duration: 0.6)) { ground = 1 }
-        withAnimation(.spring(response: 0.7, dampingFraction: 0.8).delay(0.3)) { mast = 1 }
-        withAnimation(.easeOut(duration: 0.45).delay(0.9)) { jib = true }
-        for i in 0..<Self.floorCount {
-            let t = 1.3 + Double(i) * 0.5
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.6).delay(t)) { placed[i] = true }
-            withAnimation(.easeOut(duration: 0.25).delay(t + 0.3)) { lit[i] = true }
-        }
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.45).delay(4.0)) { flag = true }
-        withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true).delay(1.5)) { sway = true }
-        withAnimation(.spring(response: 0.45, dampingFraction: 0.65).delay(3.6)) { focus = true }
-        withAnimation(.easeInOut(duration: 0.8).delay(3.9)) { scan = 1 }
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.5).delay(4.6)) { verified = true }
-        withAnimation(.easeOut(duration: 0.6).delay(4.4)) { brand = true }
-    }
-}
-
-/// One corner of a viewfinder: an L shape whose corner is at the top left.
-private struct BracketCorner: Shape {
-    func path(in r: CGRect) -> Path {
-        var p = Path()
-        p.move(to: CGPoint(x: r.minX, y: r.maxY)); p.addLine(to: CGPoint(x: r.minX, y: r.minY)); p.addLine(to: CGPoint(x: r.maxX, y: r.minY))
-        return p
     }
 }

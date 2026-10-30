@@ -73,7 +73,7 @@ struct HomeView: View {
     private func heroHeader(_ s: ProjectSnapshot) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
-                Text(s.project.status.rawValue.uppercased()).font(.caption2.weight(.bold)).foregroundStyle(.white)
+                Text(s.project.status.rawValue.uppercased()).font(.caption2.weight(.bold)).foregroundStyle(Theme.onAccent)
                     .padding(.horizontal, 8).padding(.vertical, 4).background(Theme.accent, in: Capsule())
                 Text("\(context.actor.role.displayName.uppercased())").font(.caption.weight(.semibold)).foregroundStyle(Theme.secondaryText)
             }
@@ -110,10 +110,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Image(systemName: "exclamationmark.circle").font(.title2).foregroundStyle(Theme.accentText)
                     Spacer(minLength: 28)
-                    Text("Report Issue").font(.title2.weight(.bold)).foregroundStyle(.black)
+                    Text("Report Issue").font(.title2.weight(.bold)).foregroundStyle(Theme.text)
                 }
                 .padding(18).frame(maxWidth: .infinity, minHeight: 170, alignment: .topLeading)
-                .background(Color.white, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .background(Theme.surface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
             .buttonStyle(.plain)
 
@@ -134,7 +134,7 @@ struct HomeView: View {
             }
             .padding(.horizontal, 16).frame(maxWidth: .infinity, minHeight: Glove.target + 8, alignment: .leading)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Color.white.opacity(0.14), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(Theme.text.opacity(0.10), lineWidth: 1))
         }
         .buttonStyle(.plain)
     }
