@@ -34,6 +34,7 @@
 		7FA078EA25EF1DFC4CAAA93D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37F4C4FC813A1E102B3D031E /* Assets.xcassets */; };
 		87EE104E88C7DA0E5E53A05D /* CameraService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B45374CEB8FF826E26ADD6 /* CameraService.swift */; };
 		91A3340BE7C96E48261CC522 /* KeychainSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */; };
+		952313777C89056B00684F23 /* DiagnosticsCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA29A2D3A0277599AF61BB5D /* DiagnosticsCollector.swift */; };
 		A41F2FE2919EE63EC36C3529 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */; };
 		A5AC66025C43C1EDBC4BB81A /* GloveChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A0AB8784CE1B57365E84A /* GloveChoice.swift */; };
 		A7019D0B752C2A780A1B04F3 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB310DBFAF7554EC2354E436 /* Feedback.swift */; };
@@ -45,6 +46,7 @@
 		D8F86F58C8D76E72771DFBEC /* BiometricService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB4D4C47AAB7778D9FD196B /* BiometricService.swift */; };
 		DC051D9474FF9E085AC81836 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5314C156E8B74EC547CAC381 /* AppEnvironment.swift */; };
 		E0C0CF747074AAD4BE6FA469 /* SiteMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E23A76571388A4FC1640860 /* SiteMapView.swift */; };
+		E36B5F179ABCB4F7A62489DF /* OnlineStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904FE28710567AB8B13FF570 /* OnlineStatus.swift */; };
 		EB6CDEEDBD31D3FA02746411 /* IssueViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864771CB4F09CD3C1ED4D715 /* IssueViews.swift */; };
 		F2DCBA01E7C0498BD3B2DAF3 /* ConnectivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F90CF599A2FE597E51A382 /* ConnectivityMonitor.swift */; };
 		FCBE64CCCF1D5F145F1B4283 /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB996C8D03F250E46D5939E /* SettingsViews.swift */; };
@@ -87,7 +89,9 @@
 		21505ED2368AF349F12F7249 /* EvidenceImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvidenceImage.swift; sourceTree = "<group>"; };
 		285F86754FD0E61D6D48671B /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		298791794F17477F282ADAFC /* EvalRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvalRunner.swift; sourceTree = "<group>"; };
+		2CFF0C5B02634A49277FF320 /* BACKUPS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BACKUPS.md; sourceTree = "<group>"; };
 		2E7A7B926C3776A129193398 /* BuildSight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BuildSight.entitlements; sourceTree = "<group>"; };
+		2FCFF2200E0B018204E47A05 /* helmet_recall.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = helmet_recall.py; sourceTree = "<group>"; };
 		377B4A429EBE66B519E8DEFD /* HELMET_MODEL_FEASIBILITY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HELMET_MODEL_FEASIBILITY.md; sourceTree = "<group>"; };
 		37F4C4FC813A1E102B3D031E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		382F0BD81D57DB6FA0FACD46 /* REQUIREMENTS_MATRIX.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = REQUIREMENTS_MATRIX.md; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 		4AF705ED4C638C63521A7482 /* BACKEND_SETUP.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BACKEND_SETUP.md; sourceTree = "<group>"; };
 		5314C156E8B74EC547CAC381 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		56676EF87C57FE68600CEF3D /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		6AF45BAD57E61D15B24E1E6F /* backup.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = backup.sh; sourceTree = "<group>"; };
 		6D738B825D3B57B116482EFB /* make_demo_data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = make_demo_data.swift; sourceTree = "<group>"; };
 		7D7A3B02F3B6E82F5DC311C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7F97851BDA4D328547CEEA01 /* make_seed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = make_seed.swift; sourceTree = "<group>"; };
@@ -107,6 +112,7 @@
 		880C40BC941A388712E18A84 /* InspectionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionViews.swift; sourceTree = "<group>"; };
 		8EC9E5697505040F7C173322 /* VIVA_PREP.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = VIVA_PREP.md; sourceTree = "<group>"; };
 		8F85E3027745CE0645DC2A3F /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		904FE28710567AB8B13FF570 /* OnlineStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineStatus.swift; sourceTree = "<group>"; };
 		909599C5302FC01EF4C2272F /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		92973D955F511D485E2572A1 /* BuildSightKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BuildSightKit; path = Packages/BuildSightKit; sourceTree = SOURCE_ROOT; };
 		95F4A5A7CEAD7F37FD407158 /* provenance_ppe.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = provenance_ppe.json; sourceTree = "<group>"; };
@@ -116,6 +122,7 @@
 		B1F5EECD8E298507700052E6 /* train_ppe.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = train_ppe.py; sourceTree = "<group>"; };
 		B23261EECB71635E0EF9E921 /* KNOWN_LIMITATIONS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = KNOWN_LIMITATIONS.md; sourceTree = "<group>"; };
 		B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSessionStore.swift; sourceTree = "<group>"; };
+		BA29A2D3A0277599AF61BB5D /* DiagnosticsCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsCollector.swift; sourceTree = "<group>"; };
 		BCA8674415807E0390A39D8C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BF4069CFA3496DF1EB93A61C /* Widgets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Widgets.xcconfig; sourceTree = "<group>"; };
 		C1D13584F7F334D36E4E881A /* train_ppe_v2.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = train_ppe_v2.py; sourceTree = "<group>"; };
@@ -228,6 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				4AF705ED4C638C63521A7482 /* BACKEND_SETUP.md */,
+				2CFF0C5B02634A49277FF320 /* BACKUPS.md */,
 				83BF71FC7734CCD3F51CC653 /* CHECKLIST.md */,
 				E1E72E32B734F0301130D76E /* DESIGN_DECISIONS.md */,
 				377B4A429EBE66B519E8DEFD /* HELMET_MODEL_FEASIBILITY.md */,
@@ -242,6 +250,7 @@
 		486A15D8FB985BB73B558C16 /* supabase */ = {
 			isa = PBXGroup;
 			children = (
+				6AF45BAD57E61D15B24E1E6F /* backup.sh */,
 				845D1500A425E526519E58CF /* rename_site.sql */,
 				E3B34019B861193225820F06 /* schema.sql */,
 				39A2BC68D7036521E7CCD4BA /* test_schema.sh */,
@@ -348,6 +357,7 @@
 			isa = PBXGroup;
 			children = (
 				298791794F17477F282ADAFC /* EvalRunner.swift */,
+				2FCFF2200E0B018204E47A05 /* helmet_recall.py */,
 				F9BA68FE6D4A5145DC6CA776 /* ml_metrics.py */,
 			);
 			path = eval;
@@ -360,10 +370,12 @@
 				CDB4D4C47AAB7778D9FD196B /* BiometricService.swift */,
 				C3B45374CEB8FF826E26ADD6 /* CameraService.swift */,
 				F7F90CF599A2FE597E51A382 /* ConnectivityMonitor.swift */,
+				BA29A2D3A0277599AF61BB5D /* DiagnosticsCollector.swift */,
 				D2072E71FA6952C882AE9DAD /* GeofenceService.swift */,
 				B68FBE2045AC8BA63943E4CF /* KeychainSessionStore.swift */,
 				909599C5302FC01EF4C2272F /* LocationService.swift */,
 				FC2C13F3BD69A0032095417F /* NotificationScheduler.swift */,
+				904FE28710567AB8B13FF570 /* OnlineStatus.swift */,
 				1ACB27B8B1229B753A10FCDA /* QRScannerView.swift */,
 				01F59CEAEEDE75E4A6F9FBAF /* SyncCoordinator.swift */,
 			);
@@ -598,6 +610,7 @@
 				7D0DDC6E1C673806D56DAFE9 /* CaptureFlowView.swift in Sources */,
 				0C9BA79E1BA6E16917DD8BD9 /* Components.swift in Sources */,
 				F2DCBA01E7C0498BD3B2DAF3 /* ConnectivityMonitor.swift in Sources */,
+				952313777C89056B00684F23 /* DiagnosticsCollector.swift in Sources */,
 				01E8B9D70B666D1F9AB34204 /* EvidenceImage.swift in Sources */,
 				A7019D0B752C2A780A1B04F3 /* Feedback.swift in Sources */,
 				B8ACEAF75C331128BEC3308D /* GeofenceService.swift in Sources */,
@@ -610,6 +623,7 @@
 				34CDE700127E8DA0AAFAC9E7 /* LocationService.swift in Sources */,
 				57950B64FBA172C648D8A34C /* MainShell.swift in Sources */,
 				A41F2FE2919EE63EC36C3529 /* NotificationScheduler.swift in Sources */,
+				E36B5F179ABCB4F7A62489DF /* OnlineStatus.swift in Sources */,
 				C928BAF71C10CC48F5685C64 /* PhonePreview.swift in Sources */,
 				2E916F8E138C82055FA7208D /* PlatformModifiers.swift in Sources */,
 				BF7135E430CDFC34AB63CFDD /* QRCode.swift in Sources */,

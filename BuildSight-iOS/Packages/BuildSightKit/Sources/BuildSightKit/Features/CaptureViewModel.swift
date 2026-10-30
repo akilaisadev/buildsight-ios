@@ -40,10 +40,11 @@ public final class CaptureViewModel {
     private let workflow: HelmetWorkflow
     private let sync: SyncTriggering
     private let clock: @Sendable () -> Date
+    private let availableStorage: @Sendable () -> Int64?
     public private(set) var capturedAt: Date?
     private var locationTask: Task<LocationFix, Never>?
 
-    public init(actor: ActingUser, areas: [SiteArea], defaultAreaID: UUID? = nil, store: LocalStore, files: EvidenceFileStoring, location: LocationProviding, workflow: HelmetWorkflow, sync: SyncTriggering = NoopSyncTrigger(), clock: @escaping @Sendable () -> Date = { Date() }) {
+    public init(actor: ActingUser, areas: [SiteArea], defaultAreaID: UUID? = nil, store: LocalStore, files: EvidenceFileStoring, location: LocationProviding, workflow: HelmetWorkflow, sync: SyncTriggering = NoopSyncTrigger(), clock: @escaping @Sendable () -> Date = { Date() }, availableStorage: @escaping @Sendable () -> Int64? = StorageGuard.deviceAvailableBytes) {
         self.actor = actor
         self.areas = areas.filter { $0.projectID == actor.projectID }
         self.selectedAreaID = defaultAreaID
@@ -53,6 +54,7 @@ public final class CaptureViewModel {
         self.workflow = workflow
         self.sync = sync
         self.clock = clock
+        self.availableStorage = availableStorage
     }
 
     public var canSave: Bool { selectedAreaID != nil && phase == .review }
@@ -101,6 +103,10 @@ public final class CaptureViewModel {
 
     public func saveAndAnalyse() async {
         guard phase == .review, let jpeg = capturedJPEG, let areaID = selectedAreaID, let capturedAt else { return }
+        if let free = availableStorage(), !StorageGuard.hasRoom(available: free) {
+            phase = .failed(StorageGuard.message(available: free))
+            return
+        }
         phase = .saving
         let fix = await locationTask?.value ?? .unavailable(.noFixYet)
 

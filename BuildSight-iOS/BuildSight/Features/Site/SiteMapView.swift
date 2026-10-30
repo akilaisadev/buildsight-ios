@@ -13,6 +13,7 @@ struct SiteMapView: View {
     @State private var position: MapCameraPosition = .automatic
     @State private var selectedID: String?
     @State private var showMissing = false
+    @State private var showList = false
 
     var body: some View {
         Group {
@@ -49,18 +50,34 @@ struct SiteMapView: View {
                     .padding(.leading, verticalSizeClass == .compact ? 104 : 12).padding(.trailing, 12).padding(.bottom, verticalSizeClass == .compact ? 12 : 24)   // chips sit just above the tab bar   // bar (84) + its margin (8) + a 12 pt gap, measured from the safe-area bottom
                 }
                 .overlay(alignment: .topTrailing) {
-                    if !projection.withoutLocation.isEmpty {
-                        Button { showMissing = true } label: { Label("\(projection.withoutLocation.count) without GPS", systemImage: "location.slash").font(.footnote.weight(.semibold)).padding(8).background(.regularMaterial, in: Capsule()) }
-                            .padding(10)
-                    }
+                    VStack(alignment: .trailing, spacing: 8) {
+                        // Works even when map tiles fail to load, so the records are never out of reach.
+                        Button { showList = true } label: { Label("List", systemImage: "list.bullet").font(.footnote.weight(.semibold)).padding(.horizontal, 12).frame(minHeight: 44).background(Theme.surface, in: Capsule()) }
+                            .accessibilityIdentifier("map.list")
+                        missingBadge(projection)
+                    }.padding(10)
                 }
                 .sheet(isPresented: $showMissing) { MissingLocationList(refs: projection.withoutLocation, snapshot: s) }
+                .sheet(isPresented: $showList) { SiteItemsList(items: projection.items) { open($0) } }
                 .onAppear { frame(projection, project: s.project) }
             } else { ProgressView() }
         }
         .navigationTitle("Site")
         .toolbarBackground(.hidden, for: .navigationBar)   // transparent header over the map
         .task { model.updatePermission(context.workspace.location.permission) }
+    }
+
+    @ViewBuilder private func missingBadge(_ projection: MapProjection) -> some View {
+        if !projection.withoutLocation.isEmpty {
+            Button { showMissing = true } label: { Label("\(projection.withoutLocation.count) without GPS", systemImage: "location.slash").font(.footnote.weight(.semibold)).padding(8).background(.regularMaterial, in: Capsule()) }
+        }
+    }
+
+    /// Opens a record from the list the same way the map's "Open" button does.
+    private func open(_ ref: RecordRef) {
+        showList = false
+        let route = ref.route
+        if sizeClass == .regular { router.detailPath.append(route) } else { router.push(route, in: .site) }
     }
 
     private func frame(_ projection: MapProjection, project: Project) {
@@ -150,3 +167,34 @@ struct MissingLocationList: View {
 }
 
 private extension String { var nonEmpty: String? { isEmpty ? nil : self } }
+
+/// Every record that has a GPS position, as a plain list. The map is the main view, but this stays usable
+/// when map tiles don't load (no connection, simulator) and for anyone who prefers a list.
+struct SiteItemsList: View {
+    let items: [MapItem]
+    let open: (RecordRef) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List(items) { item in
+                Button { open(item.ref) } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: TimelineRow.symbol(item.ref.kind)).foregroundStyle(Theme.accentText).frame(width: 28)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(item.title).font(.headline).foregroundStyle(Theme.text)
+                            Text("\(item.ref.kind.displayName) · \(String(format: "%.4f, %.4f", item.point.latitude, item.point.longitude))")
+                                .font(.caption).foregroundStyle(Theme.secondaryText)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
+                    }
+                    .frame(minHeight: Glove.target)
+                }
+            }
+            .overlay { if items.isEmpty { Text("No records with a GPS position yet.").foregroundStyle(Theme.secondaryText) } }
+            .navigationTitle("Site records").inlineNavigationTitle()
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
+    }
+}

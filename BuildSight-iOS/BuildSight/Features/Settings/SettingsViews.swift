@@ -159,6 +159,14 @@ struct SettingsView: View {
                 else if let problem = context.workspace.analyzerProblem { Text("\(problem). Photos are still saved; analysis is unavailable.").font(.footnote).foregroundStyle(Theme.status("high").fg) }
                 else { Text("No helmet model is installed in this build. Photos are still saved; analysis is unavailable. To add it, copy PPEDetector.mlpackage into ML/models on the Mac and build again.").font(.footnote).foregroundStyle(Theme.secondaryText) }
             }
+            Section {
+                let reports = DiagnosticsCollector.shared.reports
+                LabeledContent("Crash and hang reports", value: reports.isEmpty ? "None" : "\(reports.count) saved")
+                if !reports.isEmpty {
+                    ShareLink(items: reports) { Label("Share reports", systemImage: "square.and.arrow.up") }
+                    Button("Delete reports", role: .destructive) { DiagnosticsCollector.shared.clear(); loginRemoved.toggle() }
+                }
+            } header: { Text("Diagnostics") } footer: { Text("Apple delivers these after a crash or freeze. They stay on this device until you share them.") }
             Section { Button("Sign Out", role: .destructive) { askSignOut = true } }
         }
         .navigationTitle("Settings")

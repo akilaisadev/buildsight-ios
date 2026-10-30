@@ -114,6 +114,7 @@ final class AppEnvironment: ObservableObject {
     init() {
         let config = BackendSettings.config
         self.config = config
+        DiagnosticsCollector.shared.start()
         let sessions = KeychainSessionStore()
         let auth: AuthProvider = config.map { SupabaseAuthProvider(config: $0) } ?? UnconfiguredAuth()
         tokens = config.map { _ in AuthTokenSource(store: sessions, auth: auth) }

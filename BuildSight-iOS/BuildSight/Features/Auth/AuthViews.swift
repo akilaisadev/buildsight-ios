@@ -12,6 +12,7 @@ struct SignInView: View {
     @FocusState private var focus: Field?
     private enum Field { case email, password }
     @State private var notice: String?
+    @StateObject private var online = OnlineStatus()
     private var biometric: (name: String, symbol: String, enrolled: Bool)? { BiometricLabel.supported }
 
     private var emailError: String? {
@@ -81,6 +82,12 @@ struct SignInView: View {
     private var form: some View {
         VStack(alignment: .leading, spacing: 28) {
             Text("Welcome back").font(wide ? .system(size: 44, weight: .bold) : .largeTitle.bold()).padding(.top, wide ? 0 : -4)
+
+            if !online.isOnline {
+                Label("You're offline. Signing in needs an internet connection; after that the app works offline.", systemImage: "wifi.slash")
+                    .font(.footnote.weight(.semibold)).foregroundStyle(Theme.status("high").fg)
+                    .accessibilityIdentifier("signin.offline")
+            }
 
             if environment.config == nil {
                 ErrorBanner(message: "This build has no backend configured. Set BuildSightBackendURL and BuildSightAnonKey (see docs/BACKEND_SETUP.md).")
