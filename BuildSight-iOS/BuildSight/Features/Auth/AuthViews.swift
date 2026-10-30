@@ -11,63 +11,95 @@ struct SignInView: View {
     @FocusState private var focus: Field?
     private enum Field { case email, password }
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var wide: Bool { sizeClass == .regular }
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: 28) {
-                VStack(alignment: .leading, spacing: 0) {
-                    ZStack(alignment: .bottomLeading) {
-                        AsyncImage(url: URL(string: "https://images.unsplash.com/photo-1602757115429-b4190ae087be?w=800&q=80")) { phase in
-                            if let image = phase.image { image.resizable().scaledToFill() } else { Color(white: 0.12) }
-                        }
-                        .frame(height: 260).clipped()
-                        LinearGradient(colors: [.black.opacity(0.85), .black.opacity(0.25)], startPoint: .bottom, endPoint: .top)
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack(spacing: 10) {
-                                BrandMark().frame(width: 36, height: 36)
-                                Text("BuildSight").font(.system(size: 28, weight: .bold)).foregroundStyle(.white)
-                            }
-                            Text("Capture the site. Know the story.").font(.body.weight(.semibold)).foregroundStyle(.white.opacity(0.85))
-                        }
-                        .padding(20)
+        Group {
+            if wide {
+                // Tablet: brand panel on the left, a larger form on the right.
+                HStack(spacing: 0) {
+                    hero(cornerRadius: 0).frame(maxWidth: .infinity, maxHeight: .infinity)
+                    ScrollView {
+                        form.frame(maxWidth: 560).padding(.horizontal, 48).padding(.vertical, 56)
+                            .frame(maxWidth: .infinity)
+                            .containerRelativeFrame(.vertical, alignment: .center)   // centred, still scrolls with the keyboard up
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                    .accessibilityElement(children: .combine)
-                    Text("Welcome back").font(.largeTitle.bold()).padding(.top, 24)
+                    .frame(maxWidth: .infinity)
                 }
-
-                if environment.config == nil {
-                    ErrorBanner(message: "This build has no backend configured. Set BuildSightBackendURL and BuildSightAnonKey (see docs/BACKEND_SETUP.md).")
-                }
-
-                // One grouped block with a hairline between the rows, the way system sign-in forms look.
-                VStack(spacing: 0) {
-                    TextField("Email", text: $email).emailField().focused($focus, equals: .email)
-                        .padding(.horizontal, 16).frame(minHeight: 52).submitLabel(.next)
-                        .onSubmit { focus = .password }
-                    Divider().padding(.leading, 16)
-                    SecureField("Password", text: $password).textContentType(.password).focused($focus, equals: .password)
-                        .padding(.horizontal, 16).frame(minHeight: 52).submitLabel(.go)
-                        .onSubmit(signIn)
-                }
-                .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
-
-                if let error { ErrorBanner(message: error) }
-
-                VStack(spacing: 8) {
-                    Button(action: signIn) { if busy { ProgressView() } else { Text("Sign In") } }
-                        .buttonStyle(PrimaryButtonStyle())
-                        .disabled(busy || email.isEmpty || password.isEmpty || environment.config == nil)
-                    Button("Forgot password?") { showReset = true }
-                        .font(.body.weight(.semibold)).foregroundStyle(Theme.accentText).frame(minHeight: Glove.target)
+            } else {
+                ScrollView {
+                    VStack(spacing: 28) {
+                        hero(cornerRadius: 24).frame(height: 260)
+                        form
+                    }
+                    .padding(.horizontal, 24).padding(.bottom, 32).frame(maxWidth: 440)
+                    .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, 24).padding(.bottom, 32).frame(maxWidth: 440)
-            .frame(maxWidth: .infinity)
         }
         .scrollDismissesKeyboard(.interactively)
         .background(Theme.background)
         .sheet(isPresented: $showReset) { PasswordResetView(initialEmail: email) }
     }
+
+    private func hero(cornerRadius: CGFloat) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            // The photo sits in an overlay so its own size never decides the panel's width.
+            Color(white: 0.12).overlay {
+                AsyncImage(url: URL(string: "https://images.unsplash.com/photo-1602757115429-b4190ae087be?w=1600&q=80")) { phase in
+                    if let image = phase.image { image.resizable().scaledToFill() }
+                }
+            }
+            LinearGradient(colors: [.black.opacity(0.85), .black.opacity(0.25)], startPoint: .bottom, endPoint: .top)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 10) {
+                    BrandMark().frame(width: wide ? 52 : 36, height: wide ? 52 : 36)
+                    Text("BuildSight").font(.system(size: wide ? 44 : 28, weight: .bold)).foregroundStyle(.white)
+                }
+                Text("Capture the site. Know the story.").font((wide ? Font.title3 : Font.body).weight(.semibold)).foregroundStyle(.white.opacity(0.85))
+            }
+            .padding(wide ? 40 : 20)
+        }
+        .clipped()
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+
+    private var form: some View {
+        VStack(alignment: .leading, spacing: 28) {
+            Text("Welcome back").font(wide ? .system(size: 44, weight: .bold) : .largeTitle.bold()).padding(.top, wide ? 0 : -4)
+
+            if environment.config == nil {
+                ErrorBanner(message: "This build has no backend configured. Set BuildSightBackendURL and BuildSightAnonKey (see docs/BACKEND_SETUP.md).")
+            }
+
+            // One grouped block with a hairline between the rows, the way system sign-in forms look.
+            VStack(spacing: 0) {
+                TextField("Email", text: $email).emailField().focused($focus, equals: .email)
+                    .padding(.horizontal, 16).frame(minHeight: fieldHeight).submitLabel(.next)
+                    .onSubmit { focus = .password }
+                Divider().padding(.leading, 16)
+                SecureField("Password", text: $password).textContentType(.password).focused($focus, equals: .password)
+                    .padding(.horizontal, 16).frame(minHeight: fieldHeight).submitLabel(.go)
+                    .onSubmit(signIn)
+            }
+            .font(wide ? .title3 : .body)
+            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
+
+            if let error { ErrorBanner(message: error) }
+
+            VStack(spacing: 8) {
+                Button(action: signIn) { if busy { ProgressView() } else { Text("Sign In") } }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .disabled(busy || email.isEmpty || password.isEmpty || environment.config == nil)
+                Button("Forgot password?") { showReset = true }
+                    .font(.body.weight(.semibold)).foregroundStyle(Theme.accentText).frame(minHeight: Glove.target)
+            }
+        }
+    }
+
+    private var fieldHeight: CGFloat { wide ? 68 : 52 }
 
     private func signIn() {
         guard !busy else { return }
